@@ -1,0 +1,8 @@
+example:
+  - hello:
+informasi:
+  - getAllInformasi:
+  - getInformasiById:
+  - addInformasi:
+  - updateInformasi:
+  - deleteInformasi:
