@@ -1,51 +1,681 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:jaspr/jaspr.dart';
+import 'package:membership_app_client/membership_app_client.dart' as client;
 
-class MemberVerificationComponent extends StatelessComponent {
-  const MemberVerificationComponent({super.key});
+class MemberVerificationComponent extends StatefulComponent {
+  final client.Member member;
+  final Function(client.Member) onVerify;
+  final VoidCallback onCancel;
+
+  const MemberVerificationComponent({
+    super.key,
+    required this.member,
+    required this.onVerify,
+    required this.onCancel,
+  });
+
+  @override
+  State<MemberVerificationComponent> createState() => _MemberVerificationComponentState();
+}
+
+class _MemberVerificationComponentState extends State<MemberVerificationComponent> {
+  late client.Member editedMember;
+  // Data wilayah untuk alamat KTP
+  List<Map<String, String>> provinces = [];
+  List<Map<String, String>> regencies = [];
+  List<Map<String, String>> districts = [];
+  List<Map<String, String>> villages = [];
+
+  String? selectedProvinceId;
+  String? selectedRegencyId;
+  String? selectedDistrictId;
+  String? selectedVillageId;
+
+  // Data wilayah untuk alamat Domisili
+  List<Map<String, String>> domisiliRegencies = [];
+  List<Map<String, String>> domisiliDistricts = [];
+  List<Map<String, String>> domisiliVillages = [];
+
+  String? selectedDomisiliProvinceId;
+  String? selectedDomisiliRegencyId;
+  String? selectedDomisiliDistrictId;
+  String? selectedDomisiliVillageId;
+
+  @override
+  void initState() {
+    super.initState();
+    editedMember = component.member;
+
+    // 1. Fetch data provinsi (untuk KTP dan domisili)
+    fetchProvinces().then((_) {
+      // Inisialisasi data KTP
+      initKTPAddress();
+      // Inisialisasi data Domisili
+      initDomisiliAddress();
+    });
+  }
+
+  void initKTPAddress() {
+    // Cari provinsi berdasarkan nama (normalisasi lowerCase)
+    selectedProvinceId = provinces
+        .firstWhere(
+          (p) => p['name']!.toLowerCase() == editedMember.provinsi.toLowerCase(),
+          orElse: () => {},
+        )['id'];
+
+    print('Selected Province ID (KTP): $selectedProvinceId');
+
+    if (selectedProvinceId != null) {
+      fetchRegencies(selectedProvinceId!).then((_) {
+        selectedRegencyId = regencies
+            .firstWhere(
+              (r) => r['name']!.toLowerCase() == editedMember.kabupaten.toLowerCase(),
+              orElse: () => {},
+            )['id'];
+        print('Selected Regency ID (KTP): $selectedRegencyId');
+
+        if (selectedRegencyId != null) {
+          fetchDistricts(selectedRegencyId!).then((_) {
+            selectedDistrictId = districts
+                .firstWhere(
+                  (d) => d['name']!.toLowerCase() == editedMember.kecamatan.toLowerCase(),
+                  orElse: () => {},
+                )['id'];
+            print('Selected District ID (KTP): $selectedDistrictId');
+
+            if (selectedDistrictId != null) {
+              fetchVillages(selectedDistrictId!).then((_) {
+                selectedVillageId = villages
+                    .firstWhere(
+                      (v) => v['name']!.toLowerCase() == editedMember.kelurahan.toLowerCase(),
+                      orElse: () => {},
+                    )['id'];
+                print('Selected Village ID (KTP): $selectedVillageId');
+                setState(() {});
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  void initDomisiliAddress() {
+    // Jika user menaruh nama provinsi domisili di editedMember.provinsiDomisili
+    // kita cari ID-nya juga di 'provinces' (bisa saja pakai data provinces yang sama).
+    selectedDomisiliProvinceId = provinces
+        .firstWhere(
+          (p) => p['name']!.toLowerCase() == (editedMember.provinsiDomisili ?? '').toLowerCase(),
+          orElse: () => {},
+        )['id'];
+
+    print('Selected Province ID (DOMISILI): $selectedDomisiliProvinceId');
+
+    if (selectedDomisiliProvinceId != null) {
+      fetchRegencies(selectedDomisiliProvinceId!, isDomisili: true).then((_) {
+        selectedDomisiliRegencyId = domisiliRegencies
+            .firstWhere(
+              (r) => r['name']!.toLowerCase() == (editedMember.kabupatenDomisili ?? '').toLowerCase(),
+              orElse: () => {},
+            )['id'];
+        print('Selected Regency ID (DOMISILI): $selectedDomisiliRegencyId');
+
+        if (selectedDomisiliRegencyId != null) {
+          fetchDistricts(selectedDomisiliRegencyId!, isDomisili: true).then((_) {
+            selectedDomisiliDistrictId = domisiliDistricts
+                .firstWhere(
+                  (d) => d['name']!.toLowerCase() == (editedMember.kecamatanDomisili ?? '').toLowerCase(),
+                  orElse: () => {},
+                )['id'];
+            print('Selected District ID (DOMISILI): $selectedDomisiliDistrictId');
+
+            if (selectedDomisiliDistrictId != null) {
+              fetchVillages(selectedDomisiliDistrictId!, isDomisili: true).then((_) {
+                selectedDomisiliVillageId = domisiliVillages
+                    .firstWhere(
+                      (v) => v['name']!.toLowerCase() == (editedMember.kelurahanDomisili ?? '').toLowerCase(),
+                      orElse: () => {},
+                    )['id'];
+                print('Selected Village ID (DOMISILI): $selectedDomisiliVillageId');
+                setState(() {});
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+
+
+
+  Future<void> fetchProvinces() async {
+  try {
+    final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        provinces = data.map((item) {
+          return {
+            'id': item['id'].toString(),
+            'name': item['name'].toString(),
+          };
+        }).toList();
+      });
+    } else {
+      print('Failed to fetch provinces: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error fetching provinces: $e');
+  }
+}
+
+Future<void> fetchRegencies(String provinceId, {bool isDomisili = false}) async {
+  try {
+    final response = await http.get(Uri.parse(
+      'https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/regencies/$provinceId.json',
+    ));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        final mapped = data.map((item) {
+          return {
+            'id': item['id'].toString(),
+            'name': item['name'].toString(),
+          };
+        }).toList();
+
+        if (!isDomisili) {
+          regencies = mapped;
+          districts = [];
+          villages = [];
+          selectedRegencyId = null;
+          selectedDistrictId = null;
+        } else {
+          domisiliRegencies = mapped;
+          domisiliDistricts = [];
+          domisiliVillages = [];
+          selectedDomisiliRegencyId = null;
+          selectedDomisiliDistrictId = null;
+        }
+      });
+    } else {
+      print('Failed to fetch regencies: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error fetching regencies: $e');
+  }
+}
+
+
+Future<void> fetchDistricts(String regencyId,  {bool isDomisili = false}) async {
+  try {
+    final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/districts/$regencyId.json'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        final mapped = data.map((item) {
+          return {
+            'id': item['id'].toString(),
+            'name': item['name'].toString(),
+          };
+        }).toList();
+        if (!isDomisili) {
+          districts = mapped;
+          villages = [];
+          selectedDistrictId = null;
+        } else {
+          domisiliDistricts = mapped;
+          domisiliVillages = [];
+          selectedDomisiliDistrictId = null;
+        }
+      });
+    } else {
+      print('Failed to fetch districts: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error fetching districts: $e');
+  }
+}
+
+Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
+  try {
+    final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/villages/$districtId.json'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        final mapped = data.map((item) {
+          return {
+            'id': item['id'].toString(),
+            'name': item['name'].toString(),
+          };
+        }).toList();
+        if (!isDomisili) {
+          villages = mapped;
+        } else {
+          domisiliVillages = mapped;
+        }
+      });
+    } else {
+      print('Failed to fetch villages: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error fetching villages: $e');
+  }
+}
+
+
+  void updateField(String field, String value) {
+    if (editedMember.status == 'Valid') return; // Tidak bisa update jika status valid
+    setState(() {
+      switch (field) {
+        case 'namaPelanggan':
+          editedMember = editedMember.copyWith(namaPelanggan: value);
+          break;
+        case 'noWhatsapp':
+          editedMember = editedMember.copyWith(noWhatsapp: value);
+          break;
+        case 'alamatKtp':
+          editedMember = editedMember.copyWith(alamatKtp: value);
+          break;
+        case 'kelurahan':
+          editedMember = editedMember.copyWith(kelurahan: value);
+          break;
+        case 'kecamatan':
+          editedMember = editedMember.copyWith(kecamatan: value);
+          break;
+        case 'kabupaten':
+          editedMember = editedMember.copyWith(kabupaten: value);
+          break;
+        case 'provinsi':
+          editedMember = editedMember.copyWith(provinsi: value);
+          break;
+
+          // Domisili
+        case 'alamatDomisili':
+          editedMember = editedMember.copyWith(alamatDomisili: value);
+          break;
+        case 'kelurahanDomisili':
+          editedMember = editedMember.copyWith(kelurahanDomisili: value);
+          break;
+        case 'kecamatanDomisili':
+          editedMember = editedMember.copyWith(kecamatanDomisili: value);
+          break;
+        case 'kabupatenDomisili':
+          editedMember = editedMember.copyWith(kabupatenDomisili: value);
+          break;
+        case 'provinsiDomisili':
+          editedMember = editedMember.copyWith(provinsiDomisili: value);
+          break;
+      }
+    });
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
+    final isValid = editedMember.status == 'Valid'; // Periksa apakah status valid
+
     yield div(classes: 'verification-container', [
       div(classes: 'verification-ktp', [
-        img(src: '/images/ktp.png', alt: 'KTP Image', classes: 'ktp-image'),
+        if (editedMember.ktp != null)
+          img(src: '/images/ktp.png', alt: 'KTP Image', classes: 'ktp-image')
+          // img(src: editedMember.ktp!, alt: 'KTP Image', classes: 'ktp-image')
+        else
+          div(classes: 'ktp-not-found', [text('KTP Tidak Ditemukan')]),
       ]),
-      // Form Section
       div(classes: 'verification-form', [
         div(classes: 'form-field', [
           label([text('Nama Pelanggan')]),
-          input([], value: 'Agus Sutikno', disabled: true),
+          input(
+            [],
+            value: editedMember.namaPelanggan,
+            disabled: isValid,
+            onInput: (event) => updateField('namaPelanggan', event.target.value ?? ''),
+          ),
         ]),
         div(classes: 'form-field', [
           label([text('No. WhatsApp')]),
-          input([], value: '082255710410', disabled: true),
+          input(
+            [],
+            value: editedMember.noWhatsapp,
+            disabled: isValid,
+            onInput: (event) => updateField('noWhatsapp', event.target.value ?? ''),
+          ),
         ]),
         div(classes: 'form-field', [
           label([text('NIK')]),
-          input([], value: '3129127371610461', disabled: true),
+          input(
+            [],
+            value: editedMember.nik.toString(),
+            disabled: true, // NIK tidak bisa diedit
+          ),
         ]),
         div(classes: 'form-field', [
           label([text('Alamat KTP')]),
-          input([], value: 'Jl. Pegadaian, RT/RW 05/0002', disabled: true),
-        ]),
-        div(classes: 'form-field', [
-          label([text('Kelurahan')]),
-          input([], value: 'Gadai Hulu', disabled: true),
-        ]),
-        div(classes: 'form-field', [
-          label([text('Kecamatan')]),
-          input([], value: 'Gadai', disabled: true),
-        ]),
-        div(classes: 'form-field', [
-          label([text('Kabupaten')]),
-          input([], value: 'Sleman', disabled: true),
+          input(
+            [],
+            value: editedMember.alamatKtp,
+            disabled: isValid,
+            onInput: (event) => updateField('alamatKtp', event.target.value ?? ''),
+          ),
         ]),
         div(classes: 'form-field', [
           label([text('Provinsi')]),
-          input([], value: 'DIY Yogyakarta', disabled: true),
+          select(
+            [
+              for (final province in provinces)
+                option(
+                  value: province['id'],
+                  selected: selectedProvinceId == province['id'] ||
+                      (selectedProvinceId == null && province['name'] == editedMember.provinsi),
+                  [text(province['name']!)],
+                ),
+            ],
+            disabled: isValid,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  // Ambil elemen pertama dari list
+                  final selectedValue = value.first;
+
+                  print('Selected Value: $selectedValue'); // Debug
+                  selectedProvinceId = selectedValue;
+
+                  // Perbarui field berdasarkan nilai yang dipilih
+                  updateField(
+                    'provinsi',
+                    provinces.firstWhere((p) => p['id'] == selectedProvinceId)['name']!,
+                  );
+
+                  // Ambil kabupaten berdasarkan provinsi yang dipilih
+                  fetchRegencies(selectedProvinceId!);
+                } else {
+                  print('Invalid value: $value');
+                }
+              });
+            },
+
+          ),
         ]),
-        button(classes: 'verification-button verify', [text('VERIFIKASI')]),
-        button(classes: 'cancel-button', [text('KEMBALI')]),
+        div(classes: 'form-field', [
+          label([text('Kabupaten/Kota')]),
+          select(
+            [
+              for (final regency in regencies)
+                option(
+                  value: regency['id'],
+                  selected: selectedRegencyId == regency['id'] ||
+                      (selectedRegencyId == null && regency['name'] == editedMember.kabupaten),
+                  [text(regency['name']!)],
+                ),
+            ],
+            disabled: isValid || selectedProvinceId == null,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  // Ambil elemen pertama dari list
+                  final selectedValue = value.first;
+
+                  print('Selected Value: $selectedValue'); // Debug
+                  selectedRegencyId = selectedValue;
+
+                  // Perbarui field berdasarkan nilai yang dipilih
+                  updateField(
+                    'kabupaten',
+                    regencies.firstWhere((p) => p['id'] == selectedRegencyId)['name']!,
+                  );
+
+                  // Ambil kecamatan berdasarkan kabupaten yang dipilih
+                  fetchDistricts(selectedRegencyId!);
+                } else {
+                  print('Invalid value: $value');
+                }
+              });
+            },
+          ),
+        ]),
+        div(classes: 'form-field', [
+          label([text('Kecamatan')]),
+          select(
+            [
+              for (final district in districts)
+                option(
+                  value: district['id'],
+                  selected: selectedDistrictId == district['id'] ||
+                      (selectedDistrictId == null && district['name'] == editedMember.kecamatan),
+                  [text(district['name']!)],
+                ),
+            ],
+            disabled: isValid || selectedRegencyId == null,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  // Ambil elemen pertama dari list
+                  final selectedValue = value.first;
+
+                  print('Selected Value: $selectedValue'); // Debug
+                  selectedDistrictId = selectedValue;
+
+                  // Perbarui field berdasarkan nilai yang dipilih
+                  updateField(
+                    'kecamatan',
+                    districts.firstWhere((p) => p['id'] == selectedDistrictId)['name']!,
+                  );
+
+                  // Ambil kelurahan berdasarkan kecamatan yang dipilih
+                  fetchVillages(selectedDistrictId!);
+                } else {
+                  print('Invalid value: $value');
+                }
+              });
+            },
+          ),
+        ]),
+        div(classes: 'form-field', [
+          label([text('Kelurahan')]),
+          select(
+            [
+              for (final village in villages)
+                option(
+                  value: village['id'],
+                  selected: editedMember.kelurahan == village['name'] ||
+                      (selectedVillageId == null && village['name'] == editedMember.kelurahan),
+                  [text(village['name']!)],
+                ),
+            ],
+            disabled: isValid || selectedDistrictId == null,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  // Ambil elemen pertama dari list
+                  final selectedValue = value.first;
+
+                  print('Selected Value: $selectedValue'); // Debug
+                  selectedVillageId = selectedValue;
+
+                  // Perbarui field berdasarkan nilai yang dipilih
+                  updateField(
+                    'kelurahan',
+                    villages.firstWhere((p) => p['id'] == selectedVillageId)['name']!,
+                  );
+                } else {
+                  print('Invalid value: $value');
+                }
+              });
+            },
+          ),
+        ]),
+        // Form Alamat Domisili
+        div(classes: 'form-field', [
+          label([text('Alamat Domisili')]),
+          input(
+            [],
+            value: editedMember.alamatDomisili ?? '',
+            disabled: isValid,
+            onInput: (event) => updateField('alamatDomisili', event.target.value ?? ''),
+          ),
+        ]),
+        
+
+        // Dropdown Provinsi Domisili
+        div(classes: 'form-field', [
+          label([text('Provinsi Domisili')]),
+          select(
+            [
+              for (final province in provinces)
+                option(
+                  value: province['id'],
+                  // jika selectedDomisiliProvinceId cocok, atau jika belum null tapi nama cocok
+                  selected: selectedDomisiliProvinceId == province['id'] ||
+                      (selectedDomisiliProvinceId == null &&
+                          province['name'] == editedMember.provinsiDomisili),
+                  [text(province['name']!)]
+                ),
+            ],
+            disabled: isValid, // Non-editable kalau status member valid
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  final selectedValue = value.first; // Karena value adalah List<String>
+                  selectedDomisiliProvinceId = selectedValue;
+
+                  // Update kolom provinsi domisili di editedMember
+                  updateField(
+                    'provinsiDomisili',
+                    provinces.firstWhere((p) => p['id'] == selectedDomisiliProvinceId)['name']!,
+                  );
+
+                  // Fetch data kabupaten/kota untuk domisili
+                  fetchRegencies(selectedDomisiliProvinceId!, isDomisili: true);
+                }
+              });
+            },
+          ),
+        ]),
+
+        // Dropdown Kabupaten Domisili
+        div(classes: 'form-field', [
+          label([text('Kabupaten/Kota Domisili')]),
+          select(
+            [
+              for (final regency in domisiliRegencies)
+                option(
+                  value: regency['id'],
+                  selected: selectedDomisiliRegencyId == regency['id'] ||
+                      (selectedDomisiliRegencyId == null &&
+                          regency['name'] == editedMember.kabupatenDomisili),
+                  [text(regency['name']!)]
+                ),
+            ],
+            disabled: isValid || selectedDomisiliProvinceId == null,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  final selectedValue = value.first;
+                  selectedDomisiliRegencyId = selectedValue;
+
+                  updateField(
+                    'kabupatenDomisili',
+                    domisiliRegencies.firstWhere((p) => p['id'] == selectedDomisiliRegencyId)['name']!,
+                  );
+
+                  // Fetch data kecamatan untuk domisili
+                  fetchDistricts(selectedDomisiliRegencyId!, isDomisili: true);
+                }
+              });
+            },
+          ),
+        ]),
+
+        // Dropdown Kecamatan Domisili
+        div(classes: 'form-field', [
+          label([text('Kecamatan Domisili')]),
+          select(
+            [
+              for (final district in domisiliDistricts)
+                option(
+                  value: district['id'],
+                  selected: selectedDomisiliDistrictId == district['id'] ||
+                      (selectedDomisiliDistrictId == null &&
+                          district['name'] == editedMember.kecamatanDomisili),
+                  [text(district['name']!)]
+                ),
+            ],
+            disabled: isValid || selectedDomisiliRegencyId == null,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  final selectedValue = value.first;
+                  selectedDomisiliDistrictId = selectedValue;
+
+                  updateField(
+                    'kecamatanDomisili',
+                    domisiliDistricts.firstWhere((p) => p['id'] == selectedDomisiliDistrictId)['name']!,
+                  );
+
+                  // Fetch data kelurahan untuk domisili
+                  fetchVillages(selectedDomisiliDistrictId!, isDomisili: true);
+                }
+              });
+            },
+          ),
+        ]),
+
+        // Dropdown Kelurahan Domisili
+        div(classes: 'form-field', [
+          label([text('Kelurahan Domisili')]),
+          select(
+            [
+              for (final village in domisiliVillages)
+                option(
+                  value: village['id'],
+                  selected: selectedDomisiliVillageId == village['id'] ||
+                      (selectedDomisiliVillageId == null &&
+                          village['name'] == editedMember.kelurahanDomisili),
+                  [text(village['name']!)]
+                ),
+            ],
+            disabled: isValid || selectedDomisiliDistrictId == null,
+            onChange: (value) {
+              setState(() {
+                if (value.isNotEmpty) {
+                  final selectedValue = value.first;
+                  selectedDomisiliVillageId = selectedValue;
+
+                  updateField(
+                    'kelurahanDomisili',
+                    domisiliVillages.firstWhere((p) => p['id'] == selectedDomisiliVillageId)['name']!,
+                  );
+                }
+              });
+            },
+          ),
+        ]),
+
+
+        
+        button(
+          classes: 'verification-button verify',
+          onClick: () {
+            if (isValid) {
+              // Jika status valid, ubah menjadi "Belum Valid"
+              editedMember = editedMember.copyWith(status: 'Belum Valid');
+            } else {
+              // Jika belum valid, ubah menjadi valid
+              editedMember = editedMember.copyWith(status: 'Valid');
+            }
+            component.onVerify(editedMember);
+          },
+          [text(isValid ? 'BATALKAN VERIFIKASI' : 'VERIFIKASI')],
+        ),
+        button(
+          classes: 'cancel-button',
+          onClick: component.onCancel,
+          [text('KEMBALI')],
+        ),
       ]),
     ]);
   }
 }
+

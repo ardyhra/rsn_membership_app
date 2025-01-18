@@ -25,6 +25,11 @@ abstract class Member implements _i1.SerializableModel {
     required this.status,
     this.ktp,
     required this.tanggalDibuat,
+    this.alamatDomisili,
+    this.kelurahanDomisili,
+    this.kecamatanDomisili,
+    this.kabupatenDomisili,
+    this.provinsiDomisili,
   });
 
   factory Member({
@@ -40,6 +45,11 @@ abstract class Member implements _i1.SerializableModel {
     required String status,
     String? ktp,
     required DateTime tanggalDibuat,
+    String? alamatDomisili,
+    String? kelurahanDomisili,
+    String? kecamatanDomisili,
+    String? kabupatenDomisili,
+    String? provinsiDomisili,
   }) = _MemberImpl;
 
   factory Member.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -57,6 +67,11 @@ abstract class Member implements _i1.SerializableModel {
       ktp: jsonSerialization['ktp'] as String?,
       tanggalDibuat: _i1.DateTimeJsonExtension.fromJson(
           jsonSerialization['tanggalDibuat']),
+      alamatDomisili: jsonSerialization['alamatDomisili'] as String?,
+      kelurahanDomisili: jsonSerialization['kelurahanDomisili'] as String?,
+      kecamatanDomisili: jsonSerialization['kecamatanDomisili'] as String?,
+      kabupatenDomisili: jsonSerialization['kabupatenDomisili'] as String?,
+      provinsiDomisili: jsonSerialization['provinsiDomisili'] as String?,
     );
   }
 
@@ -87,6 +102,16 @@ abstract class Member implements _i1.SerializableModel {
 
   DateTime tanggalDibuat;
 
+  String? alamatDomisili;
+
+  String? kelurahanDomisili;
+
+  String? kecamatanDomisili;
+
+  String? kabupatenDomisili;
+
+  String? provinsiDomisili;
+
   Member copyWith({
     int? id,
     String? namaPelanggan,
@@ -100,6 +125,11 @@ abstract class Member implements _i1.SerializableModel {
     String? status,
     String? ktp,
     DateTime? tanggalDibuat,
+    String? alamatDomisili,
+    String? kelurahanDomisili,
+    String? kecamatanDomisili,
+    String? kabupatenDomisili,
+    String? provinsiDomisili,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -116,6 +146,11 @@ abstract class Member implements _i1.SerializableModel {
       'status': status,
       if (ktp != null) 'ktp': ktp,
       'tanggalDibuat': tanggalDibuat.toJson(),
+      if (alamatDomisili != null) 'alamatDomisili': alamatDomisili,
+      if (kelurahanDomisili != null) 'kelurahanDomisili': kelurahanDomisili,
+      if (kecamatanDomisili != null) 'kecamatanDomisili': kecamatanDomisili,
+      if (kabupatenDomisili != null) 'kabupatenDomisili': kabupatenDomisili,
+      if (provinsiDomisili != null) 'provinsiDomisili': provinsiDomisili,
     };
   }
 
@@ -141,6 +176,11 @@ class _MemberImpl extends Member {
     required String status,
     String? ktp,
     required DateTime tanggalDibuat,
+    String? alamatDomisili,
+    String? kelurahanDomisili,
+    String? kecamatanDomisili,
+    String? kabupatenDomisili,
+    String? provinsiDomisili,
   }) : super._(
           id: id,
           namaPelanggan: namaPelanggan,
@@ -154,6 +194,11 @@ class _MemberImpl extends Member {
           status: status,
           ktp: ktp,
           tanggalDibuat: tanggalDibuat,
+          alamatDomisili: alamatDomisili,
+          kelurahanDomisili: kelurahanDomisili,
+          kecamatanDomisili: kecamatanDomisili,
+          kabupatenDomisili: kabupatenDomisili,
+          provinsiDomisili: provinsiDomisili,
         );
 
   @override
@@ -170,6 +215,11 @@ class _MemberImpl extends Member {
     String? status,
     Object? ktp = _Undefined,
     DateTime? tanggalDibuat,
+    Object? alamatDomisili = _Undefined,
+    Object? kelurahanDomisili = _Undefined,
+    Object? kecamatanDomisili = _Undefined,
+    Object? kabupatenDomisili = _Undefined,
+    Object? provinsiDomisili = _Undefined,
   }) {
     return Member(
       id: id is int? ? id : this.id,
@@ -184,6 +234,20 @@ class _MemberImpl extends Member {
       status: status ?? this.status,
       ktp: ktp is String? ? ktp : this.ktp,
       tanggalDibuat: tanggalDibuat ?? this.tanggalDibuat,
+      alamatDomisili:
+          alamatDomisili is String? ? alamatDomisili : this.alamatDomisili,
+      kelurahanDomisili: kelurahanDomisili is String?
+          ? kelurahanDomisili
+          : this.kelurahanDomisili,
+      kecamatanDomisili: kecamatanDomisili is String?
+          ? kecamatanDomisili
+          : this.kecamatanDomisili,
+      kabupatenDomisili: kabupatenDomisili is String?
+          ? kabupatenDomisili
+          : this.kabupatenDomisili,
+      provinsiDomisili: provinsiDomisili is String?
+          ? provinsiDomisili
+          : this.provinsiDomisili,
     );
   }
 }

@@ -17,7 +17,9 @@ import 'example.dart' as _i5;
 import 'informasi.dart' as _i6;
 import 'member.dart' as _i7;
 import 'sales.dart' as _i8;
-import 'package:membership_app_client/src/protocol/informasi.dart' as _i9;
+import 'package:membership_app_client/src/protocol/database_member.dart' as _i9;
+import 'package:membership_app_client/src/protocol/informasi.dart' as _i10;
+import 'package:membership_app_client/src/protocol/member.dart' as _i11;
 export 'akun.dart';
 export 'broadcast.dart';
 export 'database_member.dart';
@@ -92,8 +94,17 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List).map((e) => deserialize<_i7.Member>(e)).toList()
           : null) as dynamic;
     }
-    if (t == List<_i9.Informasi>) {
-      return (data as List).map((e) => deserialize<_i9.Informasi>(e)).toList()
+    if (t == List<_i9.DatabaseMember>) {
+      return (data as List)
+          .map((e) => deserialize<_i9.DatabaseMember>(e))
+          .toList() as dynamic;
+    }
+    if (t == List<_i10.Informasi>) {
+      return (data as List).map((e) => deserialize<_i10.Informasi>(e)).toList()
+          as dynamic;
+    }
+    if (t == List<_i11.Member>) {
+      return (data as List).map((e) => deserialize<_i11.Member>(e)).toList()
           as dynamic;
     }
     return super.deserialize<T>(data, t);

@@ -18,7 +18,10 @@ import 'example.dart' as _i6;
 import 'informasi.dart' as _i7;
 import 'member.dart' as _i8;
 import 'sales.dart' as _i9;
-import 'package:membership_app_server/src/generated/informasi.dart' as _i10;
+import 'package:membership_app_server/src/generated/database_member.dart'
+    as _i10;
+import 'package:membership_app_server/src/generated/informasi.dart' as _i11;
+import 'package:membership_app_server/src/generated/member.dart' as _i12;
 export 'akun.dart';
 export 'broadcast.dart';
 export 'database_member.dart';
@@ -338,6 +341,36 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
         ),
         _i2.ColumnDefinition(
+          name: 'alamatDomisili',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'kelurahanDomisili',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'kecamatanDomisili',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'kabupatenDomisili',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'provinsiDomisili',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
           name: '_salesPelangganSalesId',
           columnType: _i2.ColumnType.bigint,
           isNullable: true,
@@ -510,8 +543,17 @@ class Protocol extends _i1.SerializationManagerServer {
           ? (data as List).map((e) => deserialize<_i8.Member>(e)).toList()
           : null) as dynamic;
     }
-    if (t == List<_i10.Informasi>) {
-      return (data as List).map((e) => deserialize<_i10.Informasi>(e)).toList()
+    if (t == List<_i10.DatabaseMember>) {
+      return (data as List)
+          .map((e) => deserialize<_i10.DatabaseMember>(e))
+          .toList() as dynamic;
+    }
+    if (t == List<_i11.Informasi>) {
+      return (data as List).map((e) => deserialize<_i11.Informasi>(e)).toList()
+          as dynamic;
+    }
+    if (t == List<_i12.Member>) {
+      return (data as List).map((e) => deserialize<_i12.Member>(e)).toList()
           as dynamic;
     }
     try {

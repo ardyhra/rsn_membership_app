@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const verifyButtons = document.querySelectorAll('.action-button.verify');
   const cancelButton = document.querySelector('.cancel-button');
   const rows = document.querySelectorAll('.member-table tbody tr');
+  const pagination = document.querySelector('.pagination-container');
 
   let currentFilter = 'Semua';
   verification.style.display = 'none';
@@ -48,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     verification.style.display = 'block';
     filterButtonsContainer.style.display = 'none';
     tableHeader.style.display = 'none';
+    pagination.style.display = 'none';
 
     const ktpContainer = verification.querySelector('.verification-ktp');
     const formFields = verification.querySelectorAll('.form-field input');

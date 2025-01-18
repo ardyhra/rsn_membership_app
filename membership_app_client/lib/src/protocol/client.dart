@@ -11,8 +11,53 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:membership_app_client/src/protocol/informasi.dart' as _i3;
-import 'protocol.dart' as _i4;
+import 'package:membership_app_client/src/protocol/database_member.dart' as _i3;
+import 'package:membership_app_client/src/protocol/informasi.dart' as _i4;
+import 'package:membership_app_client/src/protocol/member.dart' as _i5;
+import 'protocol.dart' as _i6;
+
+/// {@category Endpoint}
+class EndpointDatabaseMember extends _i1.EndpointRef {
+  EndpointDatabaseMember(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'databaseMember';
+
+  _i2.Future<List<_i3.DatabaseMember>> getAllDatabaseMembers() =>
+      caller.callServerEndpoint<List<_i3.DatabaseMember>>(
+        'databaseMember',
+        'getAllDatabaseMembers',
+        {},
+      );
+
+  _i2.Future<_i3.DatabaseMember?> getDatabaseMemberById(int id) =>
+      caller.callServerEndpoint<_i3.DatabaseMember?>(
+        'databaseMember',
+        'getDatabaseMemberById',
+        {'id': id},
+      );
+
+  _i2.Future<bool> addDatabaseMember(_i3.DatabaseMember databaseMember) =>
+      caller.callServerEndpoint<bool>(
+        'databaseMember',
+        'addDatabaseMember',
+        {'databaseMember': databaseMember},
+      );
+
+  _i2.Future<bool> updateDatabaseMember(_i3.DatabaseMember databaseMember) =>
+      caller.callServerEndpoint<bool>(
+        'databaseMember',
+        'updateDatabaseMember',
+        {'databaseMember': databaseMember},
+      );
+
+  _i2.Future<bool> deleteDatabaseMember(int id) =>
+      caller.callServerEndpoint<bool>(
+        'databaseMember',
+        'deleteDatabaseMember',
+        {'id': id},
+      );
+}
 
 /// {@category Endpoint}
 class EndpointExample extends _i1.EndpointRef {
@@ -35,29 +80,29 @@ class EndpointInformasi extends _i1.EndpointRef {
   @override
   String get name => 'informasi';
 
-  _i2.Future<List<_i3.Informasi>> getAllInformasi() =>
-      caller.callServerEndpoint<List<_i3.Informasi>>(
+  _i2.Future<List<_i4.Informasi>> getAllInformasi() =>
+      caller.callServerEndpoint<List<_i4.Informasi>>(
         'informasi',
         'getAllInformasi',
         {},
       );
 
-  _i2.Future<_i3.Informasi?> getInformasiById(int id) =>
-      caller.callServerEndpoint<_i3.Informasi?>(
+  _i2.Future<_i4.Informasi?> getInformasiById(int id) =>
+      caller.callServerEndpoint<_i4.Informasi?>(
         'informasi',
         'getInformasiById',
         {'id': id},
       );
 
-  _i2.Future<_i3.Informasi> addInformasi(_i3.Informasi informasi) =>
-      caller.callServerEndpoint<_i3.Informasi>(
+  _i2.Future<_i4.Informasi> addInformasi(_i4.Informasi informasi) =>
+      caller.callServerEndpoint<_i4.Informasi>(
         'informasi',
         'addInformasi',
         {'informasi': informasi},
       );
 
-  _i2.Future<_i3.Informasi> updateInformasi(_i3.Informasi informasi) =>
-      caller.callServerEndpoint<_i3.Informasi>(
+  _i2.Future<_i4.Informasi> updateInformasi(_i4.Informasi informasi) =>
+      caller.callServerEndpoint<_i4.Informasi>(
         'informasi',
         'updateInformasi',
         {'informasi': informasi},
@@ -67,6 +112,48 @@ class EndpointInformasi extends _i1.EndpointRef {
       caller.callServerEndpoint<bool>(
         'informasi',
         'deleteInformasi',
+        {'id': id},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointMember extends _i1.EndpointRef {
+  EndpointMember(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'member';
+
+  _i2.Future<List<_i5.Member>> getAllMembers() =>
+      caller.callServerEndpoint<List<_i5.Member>>(
+        'member',
+        'getAllMembers',
+        {},
+      );
+
+  _i2.Future<_i5.Member?> getMemberById(int id) =>
+      caller.callServerEndpoint<_i5.Member?>(
+        'member',
+        'getMemberById',
+        {'id': id},
+      );
+
+  _i2.Future<bool> addMember(_i5.Member member) =>
+      caller.callServerEndpoint<bool>(
+        'member',
+        'addMember',
+        {'member': member},
+      );
+
+  _i2.Future<bool> updateMember(_i5.Member member) =>
+      caller.callServerEndpoint<bool>(
+        'member',
+        'updateMember',
+        {'member': member},
+      );
+
+  _i2.Future<bool> deleteMember(int id) => caller.callServerEndpoint<bool>(
+        'member',
+        'deleteMember',
         {'id': id},
       );
 }
@@ -87,7 +174,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i4.Protocol(),
+          _i6.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -97,18 +184,26 @@ class Client extends _i1.ServerpodClientShared {
           disconnectStreamsOnLostInternetConnection:
               disconnectStreamsOnLostInternetConnection,
         ) {
+    databaseMember = EndpointDatabaseMember(this);
     example = EndpointExample(this);
     informasi = EndpointInformasi(this);
+    member = EndpointMember(this);
   }
+
+  late final EndpointDatabaseMember databaseMember;
 
   late final EndpointExample example;
 
   late final EndpointInformasi informasi;
 
+  late final EndpointMember member;
+
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+        'databaseMember': databaseMember,
         'example': example,
         'informasi': informasi,
+        'member': member,
       };
 
   @override

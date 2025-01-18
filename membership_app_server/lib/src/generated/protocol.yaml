@@ -1,3 +1,9 @@
+databaseMember:
+  - getAllDatabaseMembers:
+  - getDatabaseMemberById:
+  - addDatabaseMember:
+  - updateDatabaseMember:
+  - deleteDatabaseMember:
 example:
   - hello:
 informasi:
@@ -6,3 +12,9 @@ informasi:
   - addInformasi:
   - updateInformasi:
   - deleteInformasi:
+member:
+  - getAllMembers:
+  - getMemberById:
+  - addMember:
+  - updateMember:
+  - deleteMember:
