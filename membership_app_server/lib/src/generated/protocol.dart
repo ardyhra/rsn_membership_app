@@ -22,6 +22,7 @@ import 'package:membership_app_server/src/generated/database_member.dart'
     as _i10;
 import 'package:membership_app_server/src/generated/informasi.dart' as _i11;
 import 'package:membership_app_server/src/generated/member.dart' as _i12;
+import 'package:membership_app_server/src/generated/sales.dart' as _i13;
 export 'akun.dart';
 export 'broadcast.dart';
 export 'database_member.dart';
@@ -554,6 +555,10 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (t == List<_i12.Member>) {
       return (data as List).map((e) => deserialize<_i12.Member>(e)).toList()
+          as dynamic;
+    }
+    if (t == List<_i13.Sales>) {
+      return (data as List).map((e) => deserialize<_i13.Sales>(e)).toList()
           as dynamic;
     }
     try {

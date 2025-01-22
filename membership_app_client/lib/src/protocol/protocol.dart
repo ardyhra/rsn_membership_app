@@ -20,6 +20,7 @@ import 'sales.dart' as _i8;
 import 'package:membership_app_client/src/protocol/database_member.dart' as _i9;
 import 'package:membership_app_client/src/protocol/informasi.dart' as _i10;
 import 'package:membership_app_client/src/protocol/member.dart' as _i11;
+import 'package:membership_app_client/src/protocol/sales.dart' as _i12;
 export 'akun.dart';
 export 'broadcast.dart';
 export 'database_member.dart';
@@ -105,6 +106,10 @@ class Protocol extends _i1.SerializationManager {
     }
     if (t == List<_i11.Member>) {
       return (data as List).map((e) => deserialize<_i11.Member>(e)).toList()
+          as dynamic;
+    }
+    if (t == List<_i12.Sales>) {
+      return (data as List).map((e) => deserialize<_i12.Sales>(e)).toList()
           as dynamic;
     }
     return super.deserialize<T>(data, t);

@@ -14,7 +14,8 @@ import 'dart:async' as _i2;
 import 'package:membership_app_client/src/protocol/database_member.dart' as _i3;
 import 'package:membership_app_client/src/protocol/informasi.dart' as _i4;
 import 'package:membership_app_client/src/protocol/member.dart' as _i5;
-import 'protocol.dart' as _i6;
+import 'package:membership_app_client/src/protocol/sales.dart' as _i6;
+import 'protocol.dart' as _i7;
 
 /// {@category Endpoint}
 class EndpointDatabaseMember extends _i1.EndpointRef {
@@ -158,6 +159,80 @@ class EndpointMember extends _i1.EndpointRef {
       );
 }
 
+/// {@category Endpoint}
+class EndpointSales extends _i1.EndpointRef {
+  EndpointSales(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'sales';
+
+  _i2.Future<List<_i6.Sales>> getAllSales() =>
+      caller.callServerEndpoint<List<_i6.Sales>>(
+        'sales',
+        'getAllSales',
+        {},
+      );
+
+  _i2.Future<_i6.Sales?> getSalesById(int id) =>
+      caller.callServerEndpoint<_i6.Sales?>(
+        'sales',
+        'getSalesById',
+        {'id': id},
+      );
+
+  _i2.Future<bool> addSales(_i6.Sales sales) => caller.callServerEndpoint<bool>(
+        'sales',
+        'addSales',
+        {'sales': sales},
+      );
+
+  _i2.Future<bool> updateSales(_i6.Sales sales) =>
+      caller.callServerEndpoint<bool>(
+        'sales',
+        'updateSales',
+        {'sales': sales},
+      );
+
+  _i2.Future<bool> deleteSales(int id) => caller.callServerEndpoint<bool>(
+        'sales',
+        'deleteSales',
+        {'id': id},
+      );
+
+  _i2.Future<List<_i5.Member>> getSalesMembers(int salesId) =>
+      caller.callServerEndpoint<List<_i5.Member>>(
+        'sales',
+        'getSalesMembers',
+        {'salesId': salesId},
+      );
+
+  _i2.Future<bool> addMemberToSales(
+    int salesId,
+    _i5.Member member,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'sales',
+        'addMemberToSales',
+        {
+          'salesId': salesId,
+          'member': member,
+        },
+      );
+
+  _i2.Future<bool> removeMemberFromSales(
+    int salesId,
+    int memberId,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'sales',
+        'removeMemberFromSales',
+        {
+          'salesId': salesId,
+          'memberId': memberId,
+        },
+      );
+}
+
 class Client extends _i1.ServerpodClientShared {
   Client(
     String host, {
@@ -174,7 +249,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i6.Protocol(),
+          _i7.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -188,6 +263,7 @@ class Client extends _i1.ServerpodClientShared {
     example = EndpointExample(this);
     informasi = EndpointInformasi(this);
     member = EndpointMember(this);
+    sales = EndpointSales(this);
   }
 
   late final EndpointDatabaseMember databaseMember;
@@ -198,12 +274,15 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointMember member;
 
+  late final EndpointSales sales;
+
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
         'databaseMember': databaseMember,
         'example': example,
         'informasi': informasi,
         'member': member,
+        'sales': sales,
       };
 
   @override

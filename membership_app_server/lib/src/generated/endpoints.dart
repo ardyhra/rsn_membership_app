@@ -14,10 +14,12 @@ import '../endpoints/database_member_endpoint.dart' as _i2;
 import '../endpoints/example_endpoint.dart' as _i3;
 import '../endpoints/informasi_endpoint.dart' as _i4;
 import '../endpoints/member_endpoint.dart' as _i5;
+import '../endpoints/sales_endpoint.dart' as _i6;
 import 'package:membership_app_server/src/generated/database_member.dart'
-    as _i6;
-import 'package:membership_app_server/src/generated/informasi.dart' as _i7;
-import 'package:membership_app_server/src/generated/member.dart' as _i8;
+    as _i7;
+import 'package:membership_app_server/src/generated/informasi.dart' as _i8;
+import 'package:membership_app_server/src/generated/member.dart' as _i9;
+import 'package:membership_app_server/src/generated/sales.dart' as _i10;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -45,6 +47,12 @@ class Endpoints extends _i1.EndpointDispatch {
         ..initialize(
           server,
           'member',
+          null,
+        ),
+      'sales': _i6.SalesEndpoint()
+        ..initialize(
+          server,
+          'sales',
           null,
         ),
     };
@@ -86,7 +94,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'databaseMember': _i1.ParameterDescription(
               name: 'databaseMember',
-              type: _i1.getType<_i6.DatabaseMember>(),
+              type: _i1.getType<_i7.DatabaseMember>(),
               nullable: false,
             )
           },
@@ -105,7 +113,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'databaseMember': _i1.ParameterDescription(
               name: 'databaseMember',
-              type: _i1.getType<_i6.DatabaseMember>(),
+              type: _i1.getType<_i7.DatabaseMember>(),
               nullable: false,
             )
           },
@@ -202,7 +210,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'informasi': _i1.ParameterDescription(
               name: 'informasi',
-              type: _i1.getType<_i7.Informasi>(),
+              type: _i1.getType<_i8.Informasi>(),
               nullable: false,
             )
           },
@@ -220,7 +228,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'informasi': _i1.ParameterDescription(
               name: 'informasi',
-              type: _i1.getType<_i7.Informasi>(),
+              type: _i1.getType<_i8.Informasi>(),
               nullable: false,
             )
           },
@@ -290,7 +298,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'member': _i1.ParameterDescription(
               name: 'member',
-              type: _i1.getType<_i8.Member>(),
+              type: _i1.getType<_i9.Member>(),
               nullable: false,
             )
           },
@@ -308,7 +316,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'member': _i1.ParameterDescription(
               name: 'member',
-              type: _i1.getType<_i8.Member>(),
+              type: _i1.getType<_i9.Member>(),
               nullable: false,
             )
           },
@@ -337,6 +345,159 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['member'] as _i5.MemberEndpoint).deleteMember(
             session,
             params['id'],
+          ),
+        ),
+      },
+    );
+    connectors['sales'] = _i1.EndpointConnector(
+      name: 'sales',
+      endpoint: endpoints['sales']!,
+      methodConnectors: {
+        'getAllSales': _i1.MethodConnector(
+          name: 'getAllSales',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).getAllSales(session),
+        ),
+        'getSalesById': _i1.MethodConnector(
+          name: 'getSalesById',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).getSalesById(
+            session,
+            params['id'],
+          ),
+        ),
+        'addSales': _i1.MethodConnector(
+          name: 'addSales',
+          params: {
+            'sales': _i1.ParameterDescription(
+              name: 'sales',
+              type: _i1.getType<_i10.Sales>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).addSales(
+            session,
+            params['sales'],
+          ),
+        ),
+        'updateSales': _i1.MethodConnector(
+          name: 'updateSales',
+          params: {
+            'sales': _i1.ParameterDescription(
+              name: 'sales',
+              type: _i1.getType<_i10.Sales>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).updateSales(
+            session,
+            params['sales'],
+          ),
+        ),
+        'deleteSales': _i1.MethodConnector(
+          name: 'deleteSales',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).deleteSales(
+            session,
+            params['id'],
+          ),
+        ),
+        'getSalesMembers': _i1.MethodConnector(
+          name: 'getSalesMembers',
+          params: {
+            'salesId': _i1.ParameterDescription(
+              name: 'salesId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).getSalesMembers(
+            session,
+            params['salesId'],
+          ),
+        ),
+        'addMemberToSales': _i1.MethodConnector(
+          name: 'addMemberToSales',
+          params: {
+            'salesId': _i1.ParameterDescription(
+              name: 'salesId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'member': _i1.ParameterDescription(
+              name: 'member',
+              type: _i1.getType<_i9.Member>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).addMemberToSales(
+            session,
+            params['salesId'],
+            params['member'],
+          ),
+        ),
+        'removeMemberFromSales': _i1.MethodConnector(
+          name: 'removeMemberFromSales',
+          params: {
+            'salesId': _i1.ParameterDescription(
+              name: 'salesId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'memberId': _i1.ParameterDescription(
+              name: 'memberId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['sales'] as _i6.SalesEndpoint).removeMemberFromSales(
+            session,
+            params['salesId'],
+            params['memberId'],
           ),
         ),
       },

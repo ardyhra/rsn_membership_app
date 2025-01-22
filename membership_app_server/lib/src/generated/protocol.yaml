@@ -18,3 +18,12 @@ member:
   - addMember:
   - updateMember:
   - deleteMember:
+sales:
+  - getAllSales:
+  - getSalesById:
+  - addSales:
+  - updateSales:
+  - deleteSales:
+  - getSalesMembers:
+  - addMemberToSales:
+  - removeMemberFromSales:

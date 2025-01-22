@@ -164,7 +164,7 @@ class _MemberPageState extends State<MemberPage> {
   Future<void> verifyMember(Member updatedMember) async {
     try {
       await client.member.updateMember(updatedMember);
-      showNotification('Berhasil memverifikasi member.', true);
+      showNotification('Berhasil mengupdate verifikasi member.', true);
       fetchMembers(); // Reload data setelah verifikasi
       goToList(); // Kembali ke tampilan daftar
     } catch (e) {
@@ -192,6 +192,7 @@ class _MemberPageState extends State<MemberPage> {
             member: selectedMember!,
             onVerify: verifyMember,
             onCancel: goToList,
+            showNotification: showNotification, // Tambahkan ini
           )
         else
           div([
@@ -224,8 +225,8 @@ class _MemberPageState extends State<MemberPage> {
               searchQuery: searchQuery, // Tambahkan ini
               currentFilter: currentFilter, // Tambahkan ini
               onSort: sortTable, // Berikan fungsi sorting
-  currentSortColumn: currentSortColumn,
-  isSortAscending: isSortAscending,
+              currentSortColumn: currentSortColumn,
+              isSortAscending: isSortAscending,
             ),
           ]),
       ]),

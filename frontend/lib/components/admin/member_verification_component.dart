@@ -1,18 +1,22 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:jaspr/jaspr.dart';
-import 'package:membership_app_client/membership_app_client.dart' as client;
+import 'package:universal_html/html.dart' as html;
+import 'package:membership_app_client/membership_app_client.dart' as mem;
 
 class MemberVerificationComponent extends StatefulComponent {
-  final client.Member member;
-  final Function(client.Member) onVerify;
+  final mem.Member member;
+  final Function(mem.Member) onVerify;
   final VoidCallback onCancel;
+  final Function(String, bool) showNotification; // Tambahkan ini
 
   const MemberVerificationComponent({
     super.key,
     required this.member,
     required this.onVerify,
     required this.onCancel,
+    required this.showNotification,
   });
 
   @override
@@ -20,7 +24,7 @@ class MemberVerificationComponent extends StatefulComponent {
 }
 
 class _MemberVerificationComponentState extends State<MemberVerificationComponent> {
-  late client.Member editedMember;
+  late mem.Member editedMember;
   // Data wilayah untuk alamat KTP
   List<Map<String, String>> provinces = [];
   List<Map<String, String>> regencies = [];
@@ -41,6 +45,12 @@ class _MemberVerificationComponentState extends State<MemberVerificationComponen
   String? selectedDomisiliRegencyId;
   String? selectedDomisiliDistrictId;
   String? selectedDomisiliVillageId;
+
+  String? filePreviewUrl;
+  html.File? newKtpFile;
+  bool isUploading = false;
+
+
 
   @override
   void initState() {
@@ -151,119 +161,256 @@ class _MemberVerificationComponentState extends State<MemberVerificationComponen
 
 
   Future<void> fetchProvinces() async {
-  try {
-    final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json'));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      setState(() {
-        provinces = data.map((item) {
-          return {
-            'id': item['id'].toString(),
-            'name': item['name'].toString(),
-          };
-        }).toList();
-      });
-    } else {
-      print('Failed to fetch provinces: ${response.statusCode}');
+    try {
+      final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/provinces.json'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          provinces = data.map((item) {
+            return {
+              'id': item['id'].toString(),
+              'name': item['name'].toString(),
+            };
+          }).toList();
+        });
+      } else {
+        print('Failed to fetch provinces: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching provinces: $e');
     }
-  } catch (e) {
-    print('Error fetching provinces: $e');
   }
-}
 
-Future<void> fetchRegencies(String provinceId, {bool isDomisili = false}) async {
-  try {
-    final response = await http.get(Uri.parse(
-      'https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/regencies/$provinceId.json',
-    ));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      setState(() {
-        final mapped = data.map((item) {
-          return {
-            'id': item['id'].toString(),
-            'name': item['name'].toString(),
-          };
-        }).toList();
+  Future<void> fetchRegencies(String provinceId, {bool isDomisili = false}) async {
+    try {
+      final response = await http.get(Uri.parse(
+        'https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/regencies/$provinceId.json',
+      ));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          final mapped = data.map((item) {
+            return {
+              'id': item['id'].toString(),
+              'name': item['name'].toString(),
+            };
+          }).toList();
 
-        if (!isDomisili) {
-          regencies = mapped;
-          districts = [];
-          villages = [];
-          selectedRegencyId = null;
-          selectedDistrictId = null;
-        } else {
-          domisiliRegencies = mapped;
-          domisiliDistricts = [];
-          domisiliVillages = [];
-          selectedDomisiliRegencyId = null;
-          selectedDomisiliDistrictId = null;
+          if (!isDomisili) {
+            regencies = mapped;
+            districts = [];
+            villages = [];
+            selectedRegencyId = null;
+            selectedDistrictId = null;
+          } else {
+            domisiliRegencies = mapped;
+            domisiliDistricts = [];
+            domisiliVillages = [];
+            selectedDomisiliRegencyId = null;
+            selectedDomisiliDistrictId = null;
+          }
+        });
+      } else {
+        print('Failed to fetch regencies: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching regencies: $e');
+    }
+  }
+
+
+  Future<void> fetchDistricts(String regencyId,  {bool isDomisili = false}) async {
+    try {
+      final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/districts/$regencyId.json'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          final mapped = data.map((item) {
+            return {
+              'id': item['id'].toString(),
+              'name': item['name'].toString(),
+            };
+          }).toList();
+          if (!isDomisili) {
+            districts = mapped;
+            villages = [];
+            selectedDistrictId = null;
+          } else {
+            domisiliDistricts = mapped;
+            domisiliVillages = [];
+            selectedDomisiliDistrictId = null;
+          }
+        });
+      } else {
+        print('Failed to fetch districts: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching districts: $e');
+    }
+  }
+
+  Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
+    try {
+      final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/villages/$districtId.json'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          final mapped = data.map((item) {
+            return {
+              'id': item['id'].toString(),
+              'name': item['name'].toString(),
+            };
+          }).toList();
+          if (!isDomisili) {
+            villages = mapped;
+          } else {
+            domisiliVillages = mapped;
+          }
+        });
+      } else {
+        print('Failed to fetch villages: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching villages: $e');
+    }
+  }
+
+  Future<String?> uploadFileToObjectStorage(html.File file, String fileName) async {
+    const endpoint = 'https://s3.nevaobjects.id';
+    const bucketName = 'app-membership-01';
+    const accessKey = 'GWAWLX8LXVP86D3QIEND';
+    const secretKey = 'LW6doJ30Cemim5upi8qj6TpJ5piAtuJ851b8l8xb';
+
+    try {
+      final reader = html.FileReader();
+      reader.readAsArrayBuffer(file);
+      await reader.onLoadEnd.first;
+
+      final fileBytes = reader.result as Uint8List;
+
+      // Header S3 untuk otorisasi
+      final headers = {
+        'Content-Type': file.type,
+        'x-amz-acl': 'public-read', // Akses publik untuk file
+      };
+
+      // URL unggah
+      final uploadUrl = Uri.parse('$endpoint/$bucketName/$fileName');
+
+      final response = await http.put(
+        uploadUrl,
+        body: fileBytes,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        return '$endpoint/$bucketName/$fileName'; // URL file yang diunggah
+      } else {
+        print('Error uploading file: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  void promptUploadKTP() async {
+    // Create a hidden file input element
+    final input = html.FileUploadInputElement()
+      ..accept = 'image/*' // Hanya menerima gambar
+      ..click();
+
+    // Tunggu hingga pengguna memilih file
+    input.onChange.listen((event) async {
+      if (input.files != null && input.files!.isNotEmpty) {
+        final file = input.files!.first;
+
+        // Validasi ukuran file (opsional)
+        if (file.size > 5 * 1024 * 1024) {
+          component.showNotification('Ukuran file terlalu besar (maks 5MB)', false);
+          return;
         }
-      });
-    } else {
-      print('Failed to fetch regencies: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error fetching regencies: $e');
+
+        // Generate preview gambar
+        final reader = html.FileReader();
+        reader.readAsDataUrl(file); // Baca file sebagai data URL
+        await reader.onLoad.first; // Tunggu hingga pembacaan selesai
+
+        setState(() {
+          filePreviewUrl = reader.result as String; // URL sementara untuk preview
+          newKtpFile = file; // Simpan file untuk upload nanti
+        });
+      }
+    });
   }
-}
+
+  void onVerifikasiClicked() async {
+    if (editedMember.status == 'Valid') {
+      // Jika status valid, ubah menjadi "Belum Valid"
+      editedMember = editedMember.copyWith(status: 'Belum Valid');
+      await saveUpdatedMember(); // Simpan perubahan ke backend
+      component.showNotification('Status berhasil diubah menjadi "Belum Valid"', true);
+      return; // Selesai tanpa memproses KTP
+    }
+
+    // Jika status belum valid, proses upload file (jika ada)
+    if (newKtpFile != null) {
+      // Validasi file sebelum upload
+      final fileName = 'ktp-${DateTime.now().millisecondsSinceEpoch}.${newKtpFile!.name.split('.').last}';
+      final uploadedUrl = await uploadFileToObjectStorage(newKtpFile!, fileName);
+
+      if (uploadedUrl != null) {
+        setState(() {
+          editedMember = editedMember.copyWith(ktp: uploadedUrl, status: 'Valid');
+          filePreviewUrl = null; // Reset preview setelah upload
+          newKtpFile = null; // Reset file setelah upload
+        });
+
+        await saveUpdatedMember();
+        setState(() {
+          isUploading = false;
+        });
+        component.showNotification('KTP berhasil diperbarui dan diverifikasi', true);
+      } else {
+        component.showNotification('Gagal mengunggah KTP', false);
+      }
+    } else {
+      // Jika tidak ada file baru, hanya perbarui status
+      editedMember = editedMember.copyWith(status: 'Valid');
+      await saveUpdatedMember();
+      component.showNotification('Status diverifikasi tanpa perubahan KTP', true);
+    }
+  }
 
 
-Future<void> fetchDistricts(String regencyId,  {bool isDomisili = false}) async {
-  try {
-    final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/districts/$regencyId.json'));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      setState(() {
-        final mapped = data.map((item) {
-          return {
-            'id': item['id'].toString(),
-            'name': item['name'].toString(),
-          };
-        }).toList();
-        if (!isDomisili) {
-          districts = mapped;
-          villages = [];
-          selectedDistrictId = null;
-        } else {
-          domisiliDistricts = mapped;
-          domisiliVillages = [];
-          selectedDomisiliDistrictId = null;
-        }
-      });
-    } else {
-      print('Failed to fetch districts: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error fetching districts: $e');
-  }
-}
 
-Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
-  try {
-    final response = await http.get(Uri.parse('https://api.corsproxy.io/?url=https://emsifa.github.io/api-wilayah-indonesia/api/villages/$districtId.json'));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      setState(() {
-        final mapped = data.map((item) {
-          return {
-            'id': item['id'].toString(),
-            'name': item['name'].toString(),
-          };
-        }).toList();
-        if (!isDomisili) {
-          villages = mapped;
-        } else {
-          domisiliVillages = mapped;
-        }
-      });
-    } else {
-      print('Failed to fetch villages: ${response.statusCode}');
+
+
+  Future<void> saveUpdatedMember() async {
+    try {
+      print('Updating member in backend: ${editedMember.toJson()}');
+      final result = await mem.Client('http://localhost:8080/').member.updateMember(editedMember);
+      if (!result) {
+        print('Failed to save member');
+        component.showNotification('Gagal menyimpan perubahan KTP', false);
+      }
+      else {
+        setState(() {
+          isUploading = false;
+        });
+      print('Member updated successfully');}
+    } catch (e) {
+      print('Error updating member: $e');
+      component.showNotification('Terjadi kesalahan saat menyimpan perubahan KTP', false);
     }
-  } catch (e) {
-    print('Error fetching villages: $e');
   }
-}
+
+  
+
+  
+
+
 
 
   void updateField(String field, String value) {
@@ -312,37 +459,86 @@ Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
     });
   }
 
+  
+
+
   @override
   Iterable<Component> build(BuildContext context) sync* {
     final isValid = editedMember.status == 'Valid'; // Periksa apakah status valid
-
     yield div(classes: 'verification-container', [
       div(classes: 'verification-ktp', [
-        if (editedMember.ktp != null)
-          img(src: '/images/ktp.png', alt: 'KTP Image', classes: 'ktp-image')
-          // img(src: editedMember.ktp!, alt: 'KTP Image', classes: 'ktp-image')
+        if (filePreviewUrl != null)
+          img(
+            src: filePreviewUrl!,
+            alt: 'Preview KTP',
+            classes: 'ktp-image',
+            attributes: {
+              'style': 'cursor: pointer;',
+              'title': 'Klik untuk mengganti KTP',
+            },
+            events: {
+              'click': (event) => promptUploadKTP(), // Memungkinkan mengganti file
+            },
+          )
+        else if (editedMember.ktp != null)
+          img(
+            src: editedMember.ktp!,
+            alt: 'KTP Image',
+            classes: 'ktp-image',
+            attributes: {
+              'style': 'cursor: pointer;',
+              'title': 'Klik untuk mengganti KTP',
+            },
+            events: {
+              'click': (event) => promptUploadKTP(), // Memungkinkan mengganti file
+            },
+          )
         else
-          div(classes: 'ktp-not-found', [text('KTP Tidak Ditemukan')]),
+          div(
+            classes: 'ktp-not-found',
+            attributes: {
+              'style': 'cursor: pointer;',
+              'title': 'Klik untuk mengunggah KTP',
+            },
+            events: {
+              'click': (event) => promptUploadKTP(), // Jika file belum ada
+            },
+            [text('KTP Tidak Ditemukan')],
+          ),
       ]),
+
+
+
       div(classes: 'verification-form', [
+        // Input untuk Nama Pelanggan
         div(classes: 'form-field', [
           label([text('Nama Pelanggan')]),
           input(
             [],
             value: editedMember.namaPelanggan,
             disabled: isValid,
-            onInput: (event) => updateField('namaPelanggan', event.target.value ?? ''),
+            onInput: (value) {
+              setState(() {
+                editedMember = editedMember.copyWith(namaPelanggan: value as String);
+              });
+            },
           ),
         ]),
+        // Input untuk No. WhatsApp
         div(classes: 'form-field', [
           label([text('No. WhatsApp')]),
           input(
             [],
             value: editedMember.noWhatsapp,
             disabled: isValid,
-            onInput: (event) => updateField('noWhatsapp', event.target.value ?? ''),
+            onInput: (value) {
+              setState(() {
+                editedMember = editedMember.copyWith(noWhatsapp: value as String);
+              });
+            },
           ),
         ]),
+        // Input untuk NIK (non-editable)
         div(classes: 'form-field', [
           label([text('NIK')]),
           input(
@@ -351,13 +547,18 @@ Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
             disabled: true, // NIK tidak bisa diedit
           ),
         ]),
+        // Input untuk Alamat KTP
         div(classes: 'form-field', [
           label([text('Alamat KTP')]),
           input(
             [],
             value: editedMember.alamatKtp,
             disabled: isValid,
-            onInput: (event) => updateField('alamatKtp', event.target.value ?? ''),
+            onInput: (value) {
+              setState(() {
+                editedMember = editedMember.copyWith(alamatKtp: value as String);
+              });
+            },
           ),
         ]),
         div(classes: 'form-field', [
@@ -513,7 +714,11 @@ Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
             [],
             value: editedMember.alamatDomisili ?? '',
             disabled: isValid,
-            onInput: (event) => updateField('alamatDomisili', event.target.value ?? ''),
+            onInput: (value) {
+              setState(() {
+                editedMember = editedMember.copyWith(alamatDomisili: value as String);
+              });
+            },
           ),
         ]),
         
@@ -657,16 +862,7 @@ Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
         
         button(
           classes: 'verification-button verify',
-          onClick: () {
-            if (isValid) {
-              // Jika status valid, ubah menjadi "Belum Valid"
-              editedMember = editedMember.copyWith(status: 'Belum Valid');
-            } else {
-              // Jika belum valid, ubah menjadi valid
-              editedMember = editedMember.copyWith(status: 'Valid');
-            }
-            component.onVerify(editedMember);
-          },
+          onClick: onVerifikasiClicked,
           [text(isValid ? 'BATALKAN VERIFIKASI' : 'VERIFIKASI')],
         ),
         button(
@@ -676,6 +872,17 @@ Future<void> fetchVillages(String districtId, {bool isDomisili = false}) async {
         ),
       ]),
     ]);
+
+
+    // Overlay jika isUploading true
+    if (isUploading) {
+      yield div(
+        classes: 'loading-overlay',
+        [
+          div([],classes: 'loading-spinner'),
+          div(classes: 'loading-text', [text('Mengunggah, mohon tunggu...')]),
+        ],
+      );
+    }
   }
 }
-
