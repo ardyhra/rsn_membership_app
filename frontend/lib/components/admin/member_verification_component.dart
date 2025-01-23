@@ -278,8 +278,8 @@ class _MemberVerificationComponentState extends State<MemberVerificationComponen
   Future<String?> uploadFileToObjectStorage(html.File file, String fileName) async {
     const endpoint = 'https://s3.nevaobjects.id';
     const bucketName = 'app-membership-01';
-    const accessKey = 'GWAWLX8LXVP86D3QIEND';
-    const secretKey = 'LW6doJ30Cemim5upi8qj6TpJ5piAtuJ851b8l8xb';
+    // const accessKey = 'GWAWLX8LXVP86D3QIEND';
+    // const secretKey = 'LW6doJ30Cemim5upi8qj6TpJ5piAtuJ851b8l8xb';
 
     try {
       final reader = html.FileReader();
@@ -346,42 +346,54 @@ class _MemberVerificationComponentState extends State<MemberVerificationComponen
   }
 
   void onVerifikasiClicked() async {
-    if (editedMember.status == 'Valid') {
-      // Jika status valid, ubah menjadi "Belum Valid"
-      editedMember = editedMember.copyWith(status: 'Belum Valid');
-      await saveUpdatedMember(); // Simpan perubahan ke backend
-      component.showNotification('Status berhasil diubah menjadi "Belum Valid"', true);
-      return; // Selesai tanpa memproses KTP
-    }
+    // Aktifkan loading overlay
+    setState(() {
+      isUploading = true;
+    });
 
-    // Jika status belum valid, proses upload file (jika ada)
-    if (newKtpFile != null) {
-      // Validasi file sebelum upload
-      final fileName = 'ktp-${DateTime.now().millisecondsSinceEpoch}.${newKtpFile!.name.split('.').last}';
-      final uploadedUrl = await uploadFileToObjectStorage(newKtpFile!, fileName);
-
-      if (uploadedUrl != null) {
-        setState(() {
-          editedMember = editedMember.copyWith(ktp: uploadedUrl, status: 'Valid');
-          filePreviewUrl = null; // Reset preview setelah upload
-          newKtpFile = null; // Reset file setelah upload
-        });
-
-        await saveUpdatedMember();
-        setState(() {
-          isUploading = false;
-        });
-        component.showNotification('KTP berhasil diperbarui dan diverifikasi', true);
-      } else {
-        component.showNotification('Gagal mengunggah KTP', false);
+    try {
+      if (editedMember.status == 'Valid') {
+        // Jika status valid, ubah menjadi "Belum Valid"
+        editedMember = editedMember.copyWith(status: 'Belum Valid');
+        await saveUpdatedMember(); // Simpan perubahan ke backend
+        component.showNotification('Status berhasil diubah menjadi "Belum Valid"', true);
+        return; // Selesai tanpa memproses KTP
       }
-    } else {
-      // Jika tidak ada file baru, hanya perbarui status
-      editedMember = editedMember.copyWith(status: 'Valid');
-      await saveUpdatedMember();
-      component.showNotification('Status diverifikasi tanpa perubahan KTP', true);
+
+      // Jika status belum valid, proses upload file (jika ada)
+      if (newKtpFile != null) {
+        // Validasi file sebelum upload
+        final fileName = 'ktp-${DateTime.now().millisecondsSinceEpoch}.${newKtpFile!.name.split('.').last}';
+        final uploadedUrl = await uploadFileToObjectStorage(newKtpFile!, fileName);
+
+        if (uploadedUrl != null) {
+          setState(() {
+            editedMember = editedMember.copyWith(ktp: uploadedUrl, status: 'Valid');
+            filePreviewUrl = null; // Reset preview setelah upload
+            newKtpFile = null; // Reset file setelah upload
+          });
+
+          await saveUpdatedMember();
+          component.showNotification('KTP berhasil diperbarui dan diverifikasi', true);
+        } else {
+          component.showNotification('Gagal mengunggah KTP', false);
+        }
+      } else {
+        // Jika tidak ada file baru, hanya perbarui status
+        editedMember = editedMember.copyWith(status: 'Valid');
+        await saveUpdatedMember();
+        component.showNotification('Status diverifikasi tanpa perubahan KTP', true);
+      }
+    } catch (e) {
+      component.showNotification('Terjadi kesalahan: $e', false);
+    } finally {
+      // Nonaktifkan loading overlay setelah proses selesai
+      setState(() {
+        isUploading = false;
+      });
     }
   }
+
 
 
 
@@ -396,9 +408,6 @@ class _MemberVerificationComponentState extends State<MemberVerificationComponen
         component.showNotification('Gagal menyimpan perubahan KTP', false);
       }
       else {
-        setState(() {
-          isUploading = false;
-        });
       print('Member updated successfully');}
     } catch (e) {
       print('Error updating member: $e');

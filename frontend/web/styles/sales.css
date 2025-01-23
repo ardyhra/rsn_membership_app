@@ -5,7 +5,7 @@
 
 .sales-page .header-with-search {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
   margin-bottom: 16px;
 }
@@ -30,6 +30,7 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 16px;
+  table-layout: fixed;
 }
 
 .sales-page .sales-table th,
@@ -78,6 +79,14 @@
 .sales-table .action-button.delete:hover {
   background-color: #dc2626;
 }
+.sales-table .action-button.view-members {
+  background-color: #F59E0B;
+  color: white;
+}
+
+.sales-table .action-button.action-button.view-members:hover {
+  background-color: #D97706;
+}
 
 /* Add Button */
 .sales-page .add-button {
@@ -108,6 +117,7 @@
 
 .sales-page .submit-button {
   padding: 12px 16px;
+  width: 100%;
   background-color: #16a34a;
   color: white;
   border: none;
@@ -179,7 +189,7 @@
   height: 100vh;
   background: rgba(0, 0, 0, 0.4); /* Darken the background */
   backdrop-filter: blur(8px); /* Blur effect */
-  display: none; /* Initially hidden */
+  /* display: none; Initially hidden */
   justify-content: center;
   align-items: center;
    /* Ensure it appears above all content */
@@ -192,6 +202,11 @@
 
 /* Popup styling */
 .delete-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
   padding: 24px;
   background: white;
   border-radius: 8px;
@@ -199,13 +214,16 @@
   text-align: center;
   z-index: 1100; /* Ensure it appears above the blur overlay */
 }
-/* .sales-form {
-  margin: 0 auto;
-  width: 50%;
-} */
+.sales-form {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
 
 .sales-form .form-label {
   display: block;
+  margin-bottom: 8px;
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
@@ -238,6 +256,9 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -256,3 +277,9 @@
   gap: 8px;
 }
 
+.sales-members-list {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}

@@ -9,6 +9,13 @@ class SalesDashboardPage extends StatelessComponent {
     yield LayoutSales(
       pageTitle: 'Formulir Reward Member',
       child: div(classes: 'sales-form-page', [
+        DomComponent(
+          tag: 'link',
+          attributes: {
+            'rel': 'stylesheet',
+            'href': '/styles/mobile-sales.css',
+          },
+        ),
         form([ // Form Wrapper
           // Nama Pelanggan
           div(classes: 'form-group', [

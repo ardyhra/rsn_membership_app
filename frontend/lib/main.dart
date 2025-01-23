@@ -48,7 +48,7 @@ void main() {
       css.import('/styles/database.css'),
       css.import('/styles/mobile-member.css'),
       css.import('/styles/mobile-member-profile.css'),
-      css.import('/styles/mobile-sales.css'),
+      // css.import('/styles/mobile-sales.css'),
       css.import('/styles/mobile-sales-info.css'),
       css.import('/styles/mobile-sales-profile.css'),
       css.import('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.css'),

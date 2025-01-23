@@ -112,6 +112,8 @@ abstract class Member implements _i1.SerializableModel {
 
   String? provinsiDomisili;
 
+  var salesName;
+
   Member copyWith({
     int? id,
     String? namaPelanggan,

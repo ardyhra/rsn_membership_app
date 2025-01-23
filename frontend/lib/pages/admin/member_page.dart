@@ -177,6 +177,7 @@ class _MemberPageState extends State<MemberPage> {
   Iterable<Component> build(BuildContext context) sync* {
     yield AdminLayout(
       child: div(classes: 'member-page', [
+        h1([text('Data Member')]),
         // Notifikasi
         if (notificationMessage != null)
           div(
@@ -198,7 +199,6 @@ class _MemberPageState extends State<MemberPage> {
           div([
             // Header pencarian
             div(classes: 'header-with-search', [
-              h1([text('Data Member')]),
               input(
                 [],
                 type: InputType.text,

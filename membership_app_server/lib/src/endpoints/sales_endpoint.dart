@@ -5,6 +5,7 @@ import '../generated/member.dart'; // Untuk relasi Member
 class SalesEndpoint extends Endpoint {
   // Fetch all sales
   Future<List<Sales>> getAllSales(Session session) async {
+    session.log('getAllSales called');
     return await Sales.db.find(session);
   }
 

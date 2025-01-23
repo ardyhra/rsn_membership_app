@@ -87,7 +87,7 @@ h1 {
 
 .member-page .header-with-search {
   display: flex;
-  justify-content: space-between;
+  justify-content:right;
   align-items: center;
   margin-bottom: 16px;
 }
