@@ -1,33 +1,78 @@
 import 'package:jaspr/jaspr.dart';
 
-class PaymentPopup extends StatelessComponent {
-  const PaymentPopup({super.key});
+class PaymentPopup extends StatefulComponent {
+  final List<String> paymentUrls;
+  final int currentIndex;
+  final VoidCallback onClose;
+
+  const PaymentPopup({
+    required this.paymentUrls,
+    required this.currentIndex,
+    required this.onClose,
+    super.key,
+  });
+
+  @override
+  State<StatefulComponent> createState() => _PaymentPopupState();
+}
+
+class _PaymentPopupState extends State<PaymentPopup> {
+  late int currentPaymentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    currentPaymentIndex = component.currentIndex;
+  }
+
+  void nextImage() {
+    if (currentPaymentIndex < component.paymentUrls.length - 1) {
+      setState(() => currentPaymentIndex++);
+    }
+  }
+
+  void prevImage() {
+    if (currentPaymentIndex > 0) {
+      setState(() => currentPaymentIndex--);
+    }
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    yield div(classes: 'popup-container payment-popup', [
-      div(classes: 'popup-content', [
-        button(classes: 'carousel-prev', [text('<')]),
-        div(classes: 'carousel-image-container', [
-          img(
-            src: '/images/payment1.png',
-            alt: 'Payment Image',
-            classes: 'carousel-image',
-          ),
-        ]),
-        button(classes: 'carousel-next', [text('>')]),
-      ]),
-      // Thumbnail container moved here
-      div(classes: 'carousel-thumbnails', [
-        for (var i = 1; i <= 5; i++)
-          img(
-            src: '/images/payment$i.png',
-            alt: 'Payment Thumbnail $i',
-            classes: i == 1 ? 'thumbnail active' : 'thumbnail',
-            attributes: {'data-index': '$i'},
-          ),
-      ]),
-      button(classes: 'close-button', [text('X')]),
-    ]);
+    yield div(
+      classes: 'payment-popup-overlay',
+      events: {'click': (_) => component.onClose()},
+      [
+        div(
+          classes: 'payment-popup-content',
+          events: {'click': (evt) => evt.preventDefault()},
+          [
+            // Carousel Container
+            img(
+              src: component.paymentUrls[currentPaymentIndex],
+              alt: 'Payment',
+              classes: 'payment-image',
+            ),
+            div(classes: 'carousel-controls', [
+              button(
+                classes: 'carousel-prev',
+                onClick: prevImage,
+                [text('<')],
+              ),
+              button(
+                classes: 'carousel-next',
+                onClick: nextImage,
+                [text('>')],
+              ),
+            ]),
+            button(
+              classes: 'close-button',
+              onClick: component.onClose,
+              [text('Tutup')],
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

@@ -1,6 +1,7 @@
 databaseMember:
   - getAllDatabaseMembers:
   - getDatabaseMemberById:
+  - getDatabaseMemberByPelangganId:
   - addDatabaseMember:
   - updateDatabaseMember:
   - deleteDatabaseMember:

@@ -38,6 +38,14 @@ class EndpointDatabaseMember extends _i1.EndpointRef {
         {'id': id},
       );
 
+  _i2.Future<List<_i3.DatabaseMember>> getDatabaseMemberByPelangganId(
+          int pelangganId) =>
+      caller.callServerEndpoint<List<_i3.DatabaseMember>>(
+        'databaseMember',
+        'getDatabaseMemberByPelangganId',
+        {'pelangganId': pelangganId},
+      );
+
   _i2.Future<bool> addDatabaseMember(_i3.DatabaseMember databaseMember) =>
       caller.callServerEndpoint<bool>(
         'databaseMember',

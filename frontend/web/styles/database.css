@@ -171,3 +171,209 @@
   cursor: pointer;
 }
 
+/* ======= Database Bukti List ======= */
+.database-bukti-list {
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: auto;
+}
+
+.bukti-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bukti-table th,
+.bukti-table td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bukti-table th {
+  font-weight: 600;
+  background-color: #f3f4f6;
+}
+
+.bukti-table td {
+  background-color: white;
+}
+
+.bukti-image {
+  width: 100px;
+  height: auto;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ======= Buttons ======= */
+.edit-bukti,
+.delete-bukti {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-bukti {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+.edit-bukti:hover {
+  background-color: #1e40af;
+}
+
+.delete-bukti {
+  background-color: #dc2626;
+  color: white;
+  margin-left: 8px;
+}
+
+.delete-bukti:hover {
+  background-color: #b91c1c;
+}
+
+.add-bukti {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 16px;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.add-bukti:hover {
+  background-color: #059669;
+}
+
+.close-bukti-list {
+  margin-top: 8px;
+  width: 100%;
+  padding: 10px;
+  background-color: #374151;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.close-bukti-list:hover {
+  background-color: #1f2937;
+}
+
+/* ======= Bukti Form Styles ======= */
+.database-bukti-form {
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: auto;
+}
+
+.database-bukti-form .form-group {
+  margin-bottom: 16px;
+}
+
+.database-bukti-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.database-bukti-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.database-bukti-form .bukti-image-preview {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-top: 8px;
+  border-radius: 4px;
+}
+
+.database-bukti-form .save-button,
+.database-bukti-form .cancel-button {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.database-bukti-form .save-button {
+  background-color: #16a34a;
+  color: white;
+  margin-right: 8px;
+}
+
+.database-bukti-form .save-button:hover {
+  background-color: #059669;
+}
+
+.database-bukti-form .cancel-button {
+  background-color: #dc2626;
+  color: white;
+}
+
+.database-bukti-form .cancel-button:hover {
+  background-color: #b91c1c;
+}
+
+/* ======= Popup Delete Bukti ======= */
+.delete-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-popup {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  text-align: center;
+}
+
+.popup-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.confirm-button {
+  background-color: #dc2626;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.confirm-button:hover {
+  background-color: #b91c1c;
+}

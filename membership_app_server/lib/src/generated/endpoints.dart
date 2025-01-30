@@ -89,6 +89,25 @@ class Endpoints extends _i1.EndpointDispatch {
             params['id'],
           ),
         ),
+        'getDatabaseMemberByPelangganId': _i1.MethodConnector(
+          name: 'getDatabaseMemberByPelangganId',
+          params: {
+            'pelangganId': _i1.ParameterDescription(
+              name: 'pelangganId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['databaseMember'] as _i2.DatabaseMemberEndpoint)
+                  .getDatabaseMemberByPelangganId(
+            session,
+            params['pelangganId'],
+          ),
+        ),
         'addDatabaseMember': _i1.MethodConnector(
           name: 'addDatabaseMember',
           params: {
