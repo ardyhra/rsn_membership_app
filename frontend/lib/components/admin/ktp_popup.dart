@@ -30,7 +30,7 @@ class KtpPopup extends StatelessComponent {
             button(
               classes: 'close-button',
               onClick: onClose,
-              [text('Tutup')],
+              [],
             ),
           ],
         ),

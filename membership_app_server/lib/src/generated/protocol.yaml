@@ -1,3 +1,8 @@
+dashboard:
+  - getTotalMembers:
+  - getValidMembers:
+  - getSalesCount:
+  - getMemberChartData:
 databaseMember:
   - getAllDatabaseMembers:
   - getDatabaseMemberById:

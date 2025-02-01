@@ -2,11 +2,13 @@ import 'package:jaspr/jaspr.dart';
 
 class PaymentPopup extends StatefulComponent {
   final List<String> paymentUrls;
+  final List<String> paymentDescriptions; // Tambahkan daftar keterangan
   final int currentIndex;
   final VoidCallback onClose;
 
   const PaymentPopup({
     required this.paymentUrls,
+    required this.paymentDescriptions,
     required this.currentIndex,
     required this.onClose,
     super.key,
@@ -37,6 +39,10 @@ class _PaymentPopupState extends State<PaymentPopup> {
     }
   }
 
+  void selectImage(int index) {
+    setState(() => currentPaymentIndex = index);
+  }
+
   @override
   Iterable<Component> build(BuildContext context) sync* {
     yield div(
@@ -47,28 +53,74 @@ class _PaymentPopupState extends State<PaymentPopup> {
           classes: 'payment-popup-content',
           events: {'click': (evt) => evt.preventDefault()},
           [
-            // Carousel Container
-            img(
-              src: component.paymentUrls[currentPaymentIndex],
-              alt: 'Payment',
-              classes: 'payment-image',
-            ),
-            div(classes: 'carousel-controls', [
-              button(
-                classes: 'carousel-prev',
-                onClick: prevImage,
-                [text('<')],
-              ),
-              button(
-                classes: 'carousel-next',
-                onClick: nextImage,
-                [text('>')],
-              ),
-            ]),
+            // Jika tidak ada bukti pembayaran, tampilkan pesan
+            if (component.paymentUrls.isEmpty)
+              div(classes: 'payment-no-data', [
+                text('Belum ada bukti pembayaran'),
+              ])
+            else ...[
+              // Gambar utama
+              div(classes: 'carousel-image-container', [
+                img(
+                  src: component.paymentUrls[currentPaymentIndex],
+                  alt: 'Payment',
+                  classes: 'payment-image',
+                ),
+              ]),
+
+              // Keterangan Bukti Pembayaran
+              div(classes: 'payment-description', [
+                text(component.paymentDescriptions[currentPaymentIndex]), // Tampilkan deskripsi
+              ]),
+
+              // Tombol Next & Prev
+              div(classes: 'carousel-controls', [
+                if (currentPaymentIndex > 0)
+                  button(
+                    classes: 'carousel-prev',
+                    events: {
+                    'click': (evt) {
+                      evt.preventDefault(); // Mencegah penutupan popup
+                      prevImage();
+                    }
+                  },
+                    [text('<')],
+                  ),
+                if (currentPaymentIndex < component.paymentUrls.length - 1)
+                  button(
+                    classes: 'carousel-next',
+                    events: {
+                    'click': (evt) {
+                      evt.preventDefault(); // Mencegah penutupan popup
+                      nextImage();
+                    }
+                  },
+                    [text('>')],
+                  ),
+              ]),
+
+              // Thumbnail Navigation
+              div(classes: 'carousel-thumbnails', [
+                for (int i = 0; i < component.paymentUrls.length; i++)
+                  img(
+                    src: component.paymentUrls[i],
+                    alt: 'Thumbnail',
+                    classes: 'thumbnail ${i == currentPaymentIndex ? "active" : ""}',
+                    events: {
+                      'click': (evt) {
+                        evt.preventDefault();
+                        selectImage(i);
+                      }
+                    },
+                  ),
+              ]),
+            ],
+
+            // Tombol Tutup
             button(
               classes: 'close-button',
               onClick: component.onClose,
-              [text('Tutup')],
+              [],
             ),
           ],
         ),

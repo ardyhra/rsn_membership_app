@@ -4,10 +4,12 @@ import 'package:membership_app_client/membership_app_client.dart' as mem;
 class DatabaseBuktiDeletePopup extends StatefulComponent {
   final mem.DatabaseMember bukti;
   final VoidCallback onClose;
+  final void Function(String, bool) showNotification; // Tambahkan ini
 
   const DatabaseBuktiDeletePopup({
     required this.bukti,
     required this.onClose,
+    required this.showNotification,
     super.key,
   });
 
@@ -24,9 +26,15 @@ class _DatabaseBuktiDeletePopupState extends State<DatabaseBuktiDeletePopup> {
     try {
       final success = await client.databaseMember.deleteDatabaseMember(component.bukti.id!);
       // handle success/failure
+      if (success) {
+        component.showNotification('Bukti pembayaran berhasil dihapus!', true);
+      } else {
+        component.showNotification('Gagal menghapus bukti pembayaran.', false);
+      }
       component.onClose();
     } catch (e) {
       print('Error deleting bukti: $e');
+      component.showNotification('Error menghapus bukti pembayaran: $e', false);
     } finally {
       setState(() => isLoading = false);
     }

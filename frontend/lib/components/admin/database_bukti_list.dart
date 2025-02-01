@@ -6,10 +6,12 @@ import 'database_bukti_delete_popup.dart';
 class DatabaseBuktiList extends StatefulComponent {
   final mem.Member member;
   final VoidCallback onClose;
+  final void Function(String, bool) showNotification;
 
   const DatabaseBuktiList({
     required this.member,
     required this.onClose,
+    required this.showNotification, 
     super.key,
   });
 
@@ -95,6 +97,7 @@ class _DatabaseBuktiListState extends State<DatabaseBuktiList> {
         member: component.member,
         bukti: selectedBukti,
         onClose: closeForm,
+        showNotification: component.showNotification, // Tambahkan ini
       );
       return; // tidak render list jika sedang form
     }
@@ -103,59 +106,68 @@ class _DatabaseBuktiListState extends State<DatabaseBuktiList> {
       yield DatabaseBuktiDeletePopup(
         bukti: selectedBukti!,
         onClose: closeDeletePopup,
+        showNotification: component.showNotification, // Tambahkan ini
       );
       return;
     }
-
+    
     yield div(classes: 'database-bukti-list', [
-      h2([text('Daftar Bukti Pembayaran untuk: ${component.member.namaPelanggan}')]),
-      table(classes: 'bukti-table', [
-        thead([
-          tr([
-            th([text('Foto Bukti')]),
-            th([text('Keterangan')]),
-            th([text('Aksi')]),
+      h3([text('Daftar Bukti Pembayaran untuk: ${component.member.namaPelanggan}')]),
+      if (buktiList.isEmpty) 
+        div(
+          classes: 'no-bukti-message',
+          [text('Belum ada bukti pembayaran untuk member ini.')],
+        )
+      else
+        table(classes: 'bukti-table', [
+          thead([
+            tr([
+              th([text('Foto Bukti')]),
+              th([text('Keterangan')]),
+              th([text('Aksi')]),
+            ]),
+          ]),
+          tbody([
+            for (final bukti in buktiList)
+              tr([
+                td([
+                  if (bukti.buktiPembayaran != null)
+                    img(
+                      src: bukti.buktiPembayaran,
+                      alt: 'Bukti Pembayaran',
+                      classes: 'bukti-image',
+                    )
+                  else
+                    div([text('Belum ada foto')]),
+                ]),
+                td([text(bukti.keterangan)]),
+                td([
+                  button(
+                    classes: 'edit-bukti',
+                    onClick: () => openFormEdit(bukti),
+                    [text('Edit')],
+                  ),
+                  button(
+                    classes: 'delete-bukti',
+                    onClick: () => openDeletePopup(bukti),
+                    [text('Hapus')],
+                  ),
+                ]),
+              ]),
           ]),
         ]),
-        tbody([
-          for (final bukti in buktiList)
-            tr([
-              td([
-                if (bukti.buktiPembayaran != null)
-                  img(
-                    src: bukti.buktiPembayaran!,
-                    alt: 'Bukti Pembayaran',
-                    classes: 'bukti-image',
-                  )
-                else
-                  div([text('Belum ada foto')]),
-              ]),
-              td([text(bukti.keterangan ?? '-')]),
-              td([
-                button(
-                  classes: 'edit-bukti',
-                  onClick: () => openFormEdit(bukti),
-                  [text('Edit')],
-                ),
-                button(
-                  classes: 'delete-bukti',
-                  onClick: () => openDeletePopup(bukti),
-                  [text('Hapus')],
-                ),
-              ]),
-            ]),
-        ]),
-      ]),
-      button(
-        classes: 'add-bukti',
-        onClick: openFormAdd,
-        [text('+ Tambah Bukti')],
-      ),
-      button(
+      div(classes: 'bukti-list-buttons',[
+        button(
         classes: 'close-bukti-list',
         onClick: component.onClose,
         [text('Kembali')],
-      ),
+        ),
+        button(
+          classes: 'add-bukti',
+          onClick: openFormAdd,
+          [text('+ Tambah Bukti')],
+        ),
+      ]),
     ]);
   }
 }

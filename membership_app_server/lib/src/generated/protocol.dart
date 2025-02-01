@@ -561,6 +561,11 @@ class Protocol extends _i1.SerializationManagerServer {
           ? (data as List).map((e) => deserialize<_i8.Member>(e)).toList()
           : null) as dynamic;
     }
+    if (t == Map<String, int>) {
+      return (data as Map).map(
+              (k, v) => MapEntry(deserialize<String>(k), deserialize<int>(v)))
+          as dynamic;
+    }
     if (t == List<_i10.DatabaseMember>) {
       return (data as List)
           .map((e) => deserialize<_i10.DatabaseMember>(e))
