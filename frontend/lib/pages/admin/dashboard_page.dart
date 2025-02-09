@@ -87,10 +87,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ]),
           ]),
         // Chart Container
-        div(classes: 'chart-container', [
-          h3([text('Jumlah Member')]),
-          ChartDartComponent(),
-        ]),
+        ChartDartComponent(),
       ]),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:serverpod/serverpod.dart';
 
 import 'package:membership_app_server/src/web/routes/root.dart';
-
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'src/generated/protocol.dart';
 import 'src/generated/endpoints.dart';
 

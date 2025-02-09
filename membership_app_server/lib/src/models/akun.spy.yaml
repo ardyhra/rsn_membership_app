@@ -1,7 +1,6 @@
 class: Akun
 table: akun
 fields:
-  # accId: int
   relatedId: int
   username: String
   email: String

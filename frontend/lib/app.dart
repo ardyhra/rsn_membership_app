@@ -24,6 +24,21 @@ import 'pages/sales/sales_profile_page.dart';
 //
 // By using multi-page routing, this component will only be built on the server during pre-rendering and
 // **not** executed on the client. Instead only the nested [Home] and [About] components will be mounted on the client.
+
+class RedirectComponent extends StatelessComponent {
+  final String to;
+  const RedirectComponent({required this.to, super.key});
+
+  @override
+  Iterable<Component> build(BuildContext context) sync* {
+    // Gunakan Future.microtask agar navigasi dilakukan setelah build selesai.
+    Future.microtask(() {
+      Router.of(context).push(to);
+    });
+    // Kembalikan komponen kosong (atau loading indicator jika diperlukan)
+    yield div([]);
+  }
+}
 class App extends StatelessComponent {
   const App({super.key});
 
@@ -39,8 +54,9 @@ class App extends StatelessComponent {
     yield div(classes: 'main', [
 
 
-      Router(routes: [
-        Route(path: '/', title: 'Login', builder: (context, state) => LoginPage()),
+      Router(
+        routes: [
+        Route(path: '/', builder: (context, state) => RedirectComponent(to: '/login')),
         Route(path: '/about', title: 'About', builder: (context, state) => const About()),
         Route(path: '/login', title: 'Login', builder: (context, state) => LoginPage()),
         Route(path: '/dashboard', title: 'Dashboard', builder: (context, state) => DashboardPage()),
