@@ -40,18 +40,32 @@ Install PostgreSQL
 
 https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17
 
-Tools db bisa menggunakan DBeaver (https://dbeaver.io/files/dbeaver-ce-latest-x86_64-setup.exe). Buat new connection. Konfigurasi username dan password untuk root, lalu buat database Postgres baru. 
+Tools db bisa menggunakan DBeaver (https://dbeaver.io/files/dbeaver-ce-latest-x86_64-setup.exe). Buat new connection. Konfigurasi username dan password untuk root, lalu buat database Postgres baru.
+
+Tambahkan folder bin dari postgres (Biasanya di C:\Program Files\PostgreSQL\17\bin) ke PATH atau Environment Variables.
 
 - Migrasi Database
-
+Cara 1 :
 Download file dump postgresql di repo (membership-postgres-202504161633.sql). Buka Dbeaver. Masuk ke database baru yang masih kosong. Lakukan import dengan klik kanan di database > Tools > Execute Script > Pilih Input file dump > Start > Tunggu sampai proses selesai. 
+
+Cara 2 (jika execute script tidak bisa) :
+setelah download file dump. Buka Command Prompt. Jalankan 
+```
+pg_restore -h localhost -p 5432 -U username -d db_name file_path
+# contoh : pg_restore -h localhost -p 5432 -U postgres -d postgres "C:\Users\ASUS TUF\Documents\membership-postgres-202504161633.sql"
+```
+
 
 ### Konfigurasi Backend
 1. Masuk ke folder backend
 ```bash
 cd membership_app_server
 ```
-2. Perbarui konfigurasi pada file config/development.yaml sesuai database yang dibuat 
+2. Update dependencies
+```bash
+dart pub get
+```
+3. Perbarui konfigurasi pada file config/development.yaml sesuai database yang dibuat 
 ```bash
 # contoh
 database:
@@ -61,7 +75,7 @@ database:
   user: postgres
   password: your_password
 ```
-3. Jika ada perubahan yang dilakukan, lakukan generate kode serverpod
+4. Jika ada perubahan yang dilakukan, lakukan generate kode serverpod
 ```bash
 serverpod generate
 ```
@@ -70,7 +84,7 @@ serverpod generate
 
 serverpod create-migration 
 ```
-4. Aktivasi server backend
+5. Aktivasi server backend
 ```bash
 dart bin/main.dart
 ```
