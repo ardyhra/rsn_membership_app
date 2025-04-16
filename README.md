@@ -40,7 +40,11 @@ Install PostgreSQL
 
 https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17
 
-Konfigurasi username dan password untuk root, lalu buat database Postgres baru 
+Tools db bisa menggunakan DBeaver (https://dbeaver.io/files/dbeaver-ce-latest-x86_64-setup.exe). Buat new connection. Konfigurasi username dan password untuk root, lalu buat database Postgres baru. 
+
+- Migrasi Database
+
+Download file dump postgresql di repo (membership-postgres-202504161633.sql). Buka Dbeaver. Masuk ke database baru yang masih kosong. Lakukan import dengan klik kanan di database > Tools > Execute Script > Pilih Input file dump > Start > Tunggu sampai proses selesai. 
 
 ### Konfigurasi Backend
 1. Masuk ke folder backend
@@ -71,7 +75,7 @@ serverpod create-migration
 dart bin/main.dart
 ```
 ```bash
-# Jika ingin sekaligus migrasi database
+# Jika ingin sekaligus migrasi database (tidak perlu jika sudah berhasil import database dan isinya dari file dump, kecuali ada perubahan)
 dart bin/main.dart --apply-migrations
 ```
 ### Konfigurasi Frontend
