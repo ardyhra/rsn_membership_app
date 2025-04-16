@@ -1,7 +1,45 @@
+import 'package:universal_html/html.dart' as html;
 import 'package:jaspr/jaspr.dart';
 
-class LoginFormMobile extends StatelessComponent {
+class LoginFormMobile extends StatefulComponent {
   const LoginFormMobile({super.key});
+
+  @override
+  State createState() => _LoginFormMobileState();
+}
+
+class _LoginFormMobileState extends State<LoginFormMobile> {
+  bool _isPasswordVisible = false;
+  String _username = '';
+  String _password = '';
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
+  void _handleLogin() {
+    if (_username.isEmpty || _password.isEmpty) {
+      html.window.alert('Username and Password are required!');
+      return;
+    }
+
+    if (_username == 'admin' && _password == 'admin123') {
+      html.window.location.href = '/dashboard';
+    } else if (_username == 'member' && _password == 'member123') {
+      html.window.location.href = '/mobile-beranda';
+    } else if (_username == 'sales' && _password == 'sales123') {
+      html.window.location.href = '/sales-beranda';
+    } else {
+      html.window.alert('Invalid Username or Password!');
+    }
+
+    print({
+      'username': _username,
+      'password': '********',
+    });
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
@@ -14,6 +52,12 @@ class LoginFormMobile extends StatelessComponent {
           [],
           type: InputType.text,
           attributes: {'id': 'username-mobile', 'placeholder': 'Masukkan username anda'},
+          events: {
+            'input': (event) {
+              final target = event.target as html.InputElement;
+              setState(() => _username = target.value ?? '');
+            },
+          },
         ),
       ]),
       div(classes: 'form-group-mobile', [
@@ -21,15 +65,22 @@ class LoginFormMobile extends StatelessComponent {
         div(classes: 'password-container', [
           input(
             [],
-            type: InputType.password,
+            type: _isPasswordVisible ? InputType.text : InputType.password,
             attributes: {'id': 'password-mobile', 'placeholder': 'Masukkan password'},
+            events: {
+              'input': (event) {
+                final target = event.target as html.InputElement;
+                setState(() => _password = target.value ?? '');
+              },
+            },
           ),
           button(
             classes: 'password-toggle',
-            attributes: {'id': 'toggle-password-mobile', 'type': 'button'},
+            events: {'click': (_) => _togglePasswordVisibility()},
+            attributes: {'type': 'button'},
             [
               img(
-                src: '/images/eye-closed.png',
+                src: _isPasswordVisible ? '/images/eye-open.png' : '/images/eye-closed.png',
                 alt: 'Toggle Password Visibility',
                 classes: 'toggle-icon',
               ),
@@ -39,6 +90,7 @@ class LoginFormMobile extends StatelessComponent {
       ]),
       button(
         classes: 'login-button',
+        events: {'click': (_) => _handleLogin()},
         attributes: {'id': 'login-button-mobile'},
         [text('Masuk')],
       ),

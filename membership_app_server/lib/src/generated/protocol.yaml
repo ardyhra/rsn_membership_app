@@ -1,3 +1,25 @@
+admin:
+  - addAdmin:
+  - getAllAdmins:
+  - getAdminById:
+  - updateAdmin:
+  - deleteAdmin:
+akun:
+  - addAkun:
+  - getAllAkun:
+  - getAkunById:
+  - updateAkun:
+  - deleteAkun:
+auth:
+  - signIn:
+  - signOut:
+  - getMyAkunInfo:
+broadcast:
+  - addBroadcast:
+  - getAllBroadcasts:
+  - getBroadcastById:
+  - updateBroadcast:
+  - deleteBroadcast:
 dashboard:
   - getTotalMembers:
   - getValidMembers:

@@ -1,0 +1,7 @@
+class: AkunInfo
+fields:
+  id: int
+  relatedId: int
+  username: String
+  email: String
+  role: String

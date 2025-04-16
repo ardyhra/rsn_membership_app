@@ -1,0 +1,6 @@
+class: Admin
+table: admin
+fields:
+  namaAdmin: String
+  nip: String
+  superAdmin: bool

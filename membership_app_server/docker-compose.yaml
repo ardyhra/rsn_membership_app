@@ -1,56 +1,72 @@
+# docker-compose.yaml
 version: '3.7'
 
 services:
-  # Development services
+  # ---- Database Service ----
   postgres:
     image: postgres:16.3
     ports:
+      # Map host port 8090 to container port 5432
+      # Your friend connects to postgres via localhost:8090 if needed,
+      # but the app connects internally via 'postgres:5432'
       - '8090:5432'
     environment:
-      POSTGRES_USER: postgres
       POSTGRES_DB: membership_app
-      POSTGRES_PASSWORD: "8BxrpqdnVOlppzzvEG5zTavRE91NTtBQ"
+      POSTGRES_USER: postgres
+      # Set password here, will be passed to app via DB_PASS_ENV_VAR
+      POSTGRES_PASSWORD: "" # Choose a secure password
     volumes:
       - membership_app_data:/var/lib/postgresql/data
-    profiles:
-      - '' # Default profile
-      - dev
+    healthcheck: # Optional: Wait for DB to be ready
+      test: ["CMD-SHELL", "pg_isready -U postgres -d membership_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ---- Redis Service (Optional, if used) ----
   redis:
     image: redis:6.2.6
     ports:
+      # Map host port 8091 to container port 6379
       - '8091:6379'
-    command: redis-server --requirepass "2eYJNlSl7btab57XDUqBQ6okKBNg-doo"
-    environment:
-      - REDIS_REPLICATION_MODE=master
-    profiles:
-      - '' # Default profile
-      - dev
-
-  # Test services
-  postgres_test:
-    image: postgres:16.3
-    ports:
-      - '9090:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: membership_app_test
-      POSTGRES_PASSWORD: "uWfqB96ezqacX2oHWRjGdAfIXSmiqNhS"
+    # Set password here, will be passed to app via REDIS_PASS_ENV_VAR
+    command: redis-server --requirepass "redis_password_for_docker" # Choose a secure password
     volumes:
-      - membership_app_test_data:/var/lib/postgresql/data
-    profiles:
-      - '' # Default profile
-      - test
-  redis_test:
-    image: redis:6.2.6
-    ports:
-      - '9091:6379'
-    command: redis-server --requirepass "IL6bVWU-9ZMzqMA7UkYWkPmGXRK1COLo"
-    environment:
-      - REDIS_REPLICATION_MODE=master
-    profiles:
-      - '' # Default profile
-      - test
+      - membership_app_redis_data:/data # Persist redis data
+    healthcheck: # Optional: Wait for Redis
+      test: ["CMD", "redis-cli", "-a", "redis_password_for_docker", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # ---- Application Service ----
+  app:
+    # Build the image using the Dockerfile in the current directory (.)
+    build: .
+    ports:
+      # Map host ports to container ports defined by ENV vars in Dockerfile
+      - "8080:8080"   # Main API / Web UI
+      - "8081:8081"   # Service protocol (if used)
+      # - "8082:8082" # WebSocket (if used) - commented out if not needed
+    environment:
+      # Pass database and redis passwords to the app container
+      # These names MUST match the `${...}` variables in config/production.yaml
+      DB_PASS_ENV_VAR: "" # Use the same password as in postgres service
+      REDIS_PASS_ENV_VAR: "redis_password_for_docker" # Use the same password as in redis service
+      # You can override other ENV vars from Dockerfile here if needed
+      # e.g., LOGGING: verbose
+    # Wait for DB and Redis to be healthy before starting app
+    depends_on:
+      postgres:
+        condition: service_healthy # Use healthcheck result
+      redis:
+        condition: service_healthy # Use healthcheck result
+    volumes:
+      # Optional: Mount logs directory if Serverpod logs to files
+      # - ./logs:/app/logs # Example path inside container
+
+# --- Volumes Definition ---
+# Use named volumes for data persistence
 volumes:
   membership_app_data:
-  membership_app_test_data:
+  membership_app_redis_data: # Add redis volume

@@ -52,6 +52,9 @@ abstract class Broadcast implements _i1.TableRow, _i1.ProtocolSerialization {
   @override
   _i1.Table get table => t;
 
+  /// Returns a shallow copy of this [Broadcast]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   Broadcast copyWith({
     int? id,
     String? pesan,
@@ -123,6 +126,9 @@ class _BroadcastImpl extends Broadcast {
           tanggalDibuat: tanggalDibuat,
         );
 
+  /// Returns a shallow copy of this [Broadcast]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   Broadcast copyWith({
     Object? id = _Undefined,
@@ -203,6 +209,28 @@ class BroadcastIncludeList extends _i1.IncludeList {
 class BroadcastRepository {
   const BroadcastRepository._();
 
+  /// Returns a list of [Broadcast]s matching the given query parameters.
+  ///
+  /// Use [where] to specify which items to include in the return value.
+  /// If none is specified, all items will be returned.
+  ///
+  /// To specify the order of the items use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
+  /// The maximum number of items can be set by [limit]. If no limit is set,
+  /// all items matching the query will be returned.
+  ///
+  /// [offset] defines how many items to skip, after which [limit] (or all)
+  /// items are read from the database.
+  ///
+  /// ```dart
+  /// var persons = await Persons.db.find(
+  ///   session,
+  ///   where: (t) => t.lastName.equals('Jones'),
+  ///   orderBy: (t) => t.firstName,
+  ///   limit: 100,
+  /// );
+  /// ```
   Future<List<Broadcast>> find(
     _i1.Session session, {
     _i1.WhereExpressionBuilder<BroadcastTable>? where,
@@ -224,6 +252,23 @@ class BroadcastRepository {
     );
   }
 
+  /// Returns the first matching [Broadcast] matching the given query parameters.
+  ///
+  /// Use [where] to specify which items to include in the return value.
+  /// If none is specified, all items will be returned.
+  ///
+  /// To specify the order use [orderBy] or [orderByList]
+  /// when sorting by multiple columns.
+  ///
+  /// [offset] defines how many items to skip, after which the next one will be picked.
+  ///
+  /// ```dart
+  /// var youngestPerson = await Persons.db.findFirstRow(
+  ///   session,
+  ///   where: (t) => t.lastName.equals('Jones'),
+  ///   orderBy: (t) => t.age,
+  /// );
+  /// ```
   Future<Broadcast?> findFirstRow(
     _i1.Session session, {
     _i1.WhereExpressionBuilder<BroadcastTable>? where,
@@ -243,6 +288,7 @@ class BroadcastRepository {
     );
   }
 
+  /// Finds a single [Broadcast] by its [id] or null if no such row exists.
   Future<Broadcast?> findById(
     _i1.Session session,
     int id, {
@@ -254,6 +300,12 @@ class BroadcastRepository {
     );
   }
 
+  /// Inserts all [Broadcast]s in the list and returns the inserted rows.
+  ///
+  /// The returned [Broadcast]s will have their `id` fields set.
+  ///
+  /// This is an atomic operation, meaning that if one of the rows fails to
+  /// insert, none of the rows will be inserted.
   Future<List<Broadcast>> insert(
     _i1.Session session,
     List<Broadcast> rows, {
@@ -265,6 +317,9 @@ class BroadcastRepository {
     );
   }
 
+  /// Inserts a single [Broadcast] and returns the inserted row.
+  ///
+  /// The returned [Broadcast] will have its `id` field set.
   Future<Broadcast> insertRow(
     _i1.Session session,
     Broadcast row, {
@@ -276,6 +331,11 @@ class BroadcastRepository {
     );
   }
 
+  /// Updates all [Broadcast]s in the list and returns the updated rows. If
+  /// [columns] is provided, only those columns will be updated. Defaults to
+  /// all columns.
+  /// This is an atomic operation, meaning that if one of the rows fails to
+  /// update, none of the rows will be updated.
   Future<List<Broadcast>> update(
     _i1.Session session,
     List<Broadcast> rows, {
@@ -289,6 +349,9 @@ class BroadcastRepository {
     );
   }
 
+  /// Updates a single [Broadcast]. The row needs to have its id set.
+  /// Optionally, a list of [columns] can be provided to only update those
+  /// columns. Defaults to all columns.
   Future<Broadcast> updateRow(
     _i1.Session session,
     Broadcast row, {
@@ -302,6 +365,9 @@ class BroadcastRepository {
     );
   }
 
+  /// Deletes all [Broadcast]s in the list and returns the deleted rows.
+  /// This is an atomic operation, meaning that if one of the rows fail to
+  /// be deleted, none of the rows will be deleted.
   Future<List<Broadcast>> delete(
     _i1.Session session,
     List<Broadcast> rows, {
@@ -313,6 +379,7 @@ class BroadcastRepository {
     );
   }
 
+  /// Deletes a single [Broadcast].
   Future<Broadcast> deleteRow(
     _i1.Session session,
     Broadcast row, {
@@ -324,6 +391,7 @@ class BroadcastRepository {
     );
   }
 
+  /// Deletes all rows matching the [where] expression.
   Future<List<Broadcast>> deleteWhere(
     _i1.Session session, {
     required _i1.WhereExpressionBuilder<BroadcastTable> where,
@@ -335,6 +403,8 @@ class BroadcastRepository {
     );
   }
 
+  /// Counts the number of rows matching the [where] expression. If omitted,
+  /// will return the count of all rows in the table.
   Future<int> count(
     _i1.Session session, {
     _i1.WhereExpressionBuilder<BroadcastTable>? where,

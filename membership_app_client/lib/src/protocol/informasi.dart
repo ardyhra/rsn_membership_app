@@ -52,6 +52,9 @@ abstract class Informasi implements _i1.SerializableModel {
 
   String deskripsi;
 
+  /// Returns a shallow copy of this [Informasi]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   Informasi copyWith({
     int? id,
     String? tujuan,
@@ -93,6 +96,9 @@ class _InformasiImpl extends Informasi {
           deskripsi: deskripsi,
         );
 
+  /// Returns a shallow copy of this [Informasi]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   Informasi copyWith({
     Object? id = _Undefined,

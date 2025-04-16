@@ -4,7 +4,7 @@ import '../../components/admin/admin_layout.dart';
 import '../../components/admin/formulir_list.dart';
 import '../../components/admin/formulir_form.dart';
 import '../../components/admin/formulir_detail.dart';
-
+import '../../services/profile_service.dart'; // Import ProfileService
 @client
 class FormulirPage extends StatefulComponent {
   const FormulirPage({super.key});
@@ -33,6 +33,8 @@ class _FormulirPageState extends State<FormulirPage> {
   @override
   void initState() {
     super.initState();
+    print("[CLIENT DashboardPage] initState: Calling fetchUserProfile...");
+    ProfileService.instance.fetchUserProfile();
     fetchAllData();
   }
 

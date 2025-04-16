@@ -1,0 +1,20 @@
+# Example: session_token.yaml
+class: SessionToken
+table: session_token # Optional: specify table name
+fields:
+  tokenHash: String # Store a hash of the token, not the token itself!
+  userId: int # Foreign key to your Akun table id
+  createdAt: DateTime
+  expiresAt: DateTime
+  # Optional extra fields for security/audit:
+  # lastUsedAt: DateTime?
+  # ipAddress: String?
+  # userAgent: String?
+indexes: # Index for fast lookup
+  session_token_token_hash_idx:
+    fields: tokenHash
+    unique: true # Ensure tokens are unique
+  session_token_user_id_idx:
+    fields: userId # Index for finding user's sessions
+  session_token_expires_at_idx:
+    fields: expiresAt # Index for cleanup

@@ -1,7 +1,7 @@
 import 'package:serverpod/serverpod.dart';
 
 import 'package:membership_app_server/src/web/routes/root.dart';
-import 'package:jaguar_jwt/jaguar_jwt.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 import 'src/generated/protocol.dart';
 import 'src/generated/endpoints.dart';
 
@@ -19,7 +19,6 @@ void run(List<String> args) async {
 
   // If you are using any future calls, they need to be registered here.
   // pod.registerFutureCall(ExampleFutureCall(), 'exampleFutureCall');
-
   // Setup a default page at the web root.
   pod.webServer.addRoute(RouteRoot(), '/');
   pod.webServer.addRoute(RouteRoot(), '/index.html');
@@ -28,7 +27,9 @@ void run(List<String> args) async {
     RouteStaticDirectory(serverDirectory: 'static', basePath: '/'),
     '/*',
   );
-
+  auth.AuthConfig.set(auth.AuthConfig(
+     // ... any specific auth config if needed
+  ));
   // Start the server.
   await pod.start();
 }

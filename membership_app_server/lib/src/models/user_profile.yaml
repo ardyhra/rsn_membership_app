@@ -1,0 +1,7 @@
+class: UserProfile
+fields:
+  akunInfo: AkunInfo?, # Basic Akun details (non-sensitive)
+  # Add fields for each possible role profile
+  adminProfile: Admin?
+  # memberProfile: Member? # Uncomment/add if you have a Member model
+  # salesProfile: Sales? # Uncomment/add if you have a Sales model

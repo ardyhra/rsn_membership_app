@@ -13,7 +13,7 @@ class LayoutSales extends StatelessComponent {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    var activePath = context.binding.currentUri.path;
+    var activePath = context.binding.currentUrl;
 
     yield DomComponent(
       tag: 'div',

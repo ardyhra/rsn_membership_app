@@ -2,7 +2,7 @@ import 'package:jaspr/jaspr.dart';
 import '../../components/admin/admin_layout.dart';
 import '../../components/admin/charts.dart';
 import 'package:membership_app_client/membership_app_client.dart' as mem;
-
+import '../../services/profile_service.dart'; // Import ProfileService
 @client
 class DashboardPage extends StatefulComponent {
   const DashboardPage({super.key});
@@ -23,6 +23,8 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    print("[CLIENT DashboardPage] initState: Calling fetchUserProfile...");
+    ProfileService.instance.fetchUserProfile();
     fetchStats();
   }
 

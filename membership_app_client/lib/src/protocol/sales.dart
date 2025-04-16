@@ -54,6 +54,9 @@ abstract class Sales implements _i1.SerializableModel {
 
   String noWhatsapp;
 
+  /// Returns a shallow copy of this [Sales]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   Sales copyWith({
     int? id,
     String? namaSales,
@@ -96,6 +99,9 @@ class _SalesImpl extends Sales {
           noWhatsapp: noWhatsapp,
         );
 
+  /// Returns a shallow copy of this [Sales]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   Sales copyWith({
     Object? id = _Undefined,

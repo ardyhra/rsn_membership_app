@@ -1,26 +1,32 @@
 import 'package:jaspr/jaspr.dart';
 import 'sidebar.dart';
 import 'navbar.dart';
-
+import '../../services/profile_service.dart'; // Import ProfileService
 class AdminLayout extends StatelessComponent {
-  final Component child; // Halaman admin di dalam layout
-  final String title;
-
-  const AdminLayout({super.key, required this.child, this.title = 'Admin Panel'});
+  final Component child;
+  const AdminLayout({required this.child, super.key});
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    yield div(classes: 'admin-layout', [
-      const Sidebar(),
-      div(classes: 'content-area', [
-        DomComponent(
-          tag: 'script',
-          attributes: {'src': '/scripts/navbar-handler.js'},
-        ),
-        Navbar(title: title),
-        div(classes: 'page-content', [child]),
-      ]),
-    ]);
+    yield StreamBuilder<ProfileState>(
+      stream: ProfileService.instance.profileStateStream,
+      initialData: ProfileService.instance.currentInitialState,
+      builder: (context, snapshot) sync* {
+        final state = snapshot.data!;
+        if (state.isLoading) { /* Show Loading */ return; }
+        if (!state.isLoggedIn) { /* Show Auth Error / Redirect */ return; }
+
+        // Render layout IF loading done AND logged in
+        yield div(classes: 'admin-layout', [
+          const Sidebar(),
+          div(classes: 'content-area', [
+            DomComponent(tag: 'script', /* ... */),
+            const Navbar(), // Navbar gets title from service itself
+            div(classes: 'page-content', [child]), // Render the actual page
+          ]),
+        ]);
+      }
+    );
   }
 
   @css

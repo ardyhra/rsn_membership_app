@@ -15,6 +15,13 @@
   color: #111827;
 }
 
+.navbar h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #5c5c5d;
+  margin: 8px 0px 12px 0px;
+}
+
 .navbar-actions {
   display: flex;
   align-items: center;
@@ -49,7 +56,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  cursor: pointer;
+  cursor: default;
 }
 
 .profile .profile-pic {
@@ -71,42 +78,62 @@
   height: 16px;
 }
 
-/*dropdown styles*/
+
+.dropdown-icon {
+  cursor: pointer; /* Make icon look clickable */
+  margin-left: 5px; /* Adjust spacing */
+}
+
 .dropdown-menu {
-  display: none; /* Initially hidden */
+  display: none; /* Hide by default */
   position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  border: 1px solid #D1D5DB;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 8px;
-  z-index: 10;
-  width: 150px;
-  text-align: left;
+  top: 100%; /* Position below the navbar items */
+  right: 0; /* Align to the right */
+  background-color: #ffffff; /* Or your desired background */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  min-width: 120px; /* Example width */
+  z-index: 10; /* Ensure it appears above other content */
+  list-style: none;
+  padding: 5px 0;
+  margin-top: 5px; /* Add some space */
 }
 
-.dropdown-menu .dropdown-item {
+/* --- Rule to SHOW the dropdown --- */
+.dropdown-menu.active {
+  display: block; /* Show when the 'active' class is present */
+}
+
+.dropdown-item {
   display: block;
-  padding: 12px 16px;
-  font-size: 0.875rem;
-  color: #374151;
-  cursor: pointer;
-  border: none;
-  background: none;
-  text-align: left;
   width: 100%;
+  padding: 8px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333; /* Text color */
+  white-space: nowrap;
 }
 
-.dropdown-menu .dropdown-item:hover {
-  background-color: #F3F4F6;
-  color: #111827;
+.dropdown-item:hover {
+  background-color: #f5f5f5; /* Hover effect */
 }
+
+.logout-button {
+  /* Add specific styles if needed */
+  color: #c0392b; /* Example logout color */
+}
+
 
 /* Show Dropdown Menu */
 .profile.open .dropdown-menu {
   display: block; /* Show the menu when `.profile` has the `open` class */
 }
 
-
+.title-section {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}

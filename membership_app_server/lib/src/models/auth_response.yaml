@@ -1,0 +1,6 @@
+class: AuthResponse
+fields:
+  success: bool
+  akunInfo: AkunInfo? # A specific class without sensitive data like password hash
+  key: String? # The auth key for the client
+  message: String?

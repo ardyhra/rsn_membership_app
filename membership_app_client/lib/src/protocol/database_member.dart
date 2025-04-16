@@ -46,6 +46,9 @@ abstract class DatabaseMember implements _i1.SerializableModel {
 
   int pelangganId;
 
+  /// Returns a shallow copy of this [DatabaseMember]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   DatabaseMember copyWith({
     int? id,
     String? buktiPembayaran,
@@ -83,6 +86,9 @@ class _DatabaseMemberImpl extends DatabaseMember {
           pelangganId: pelangganId,
         );
 
+  /// Returns a shallow copy of this [DatabaseMember]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   DatabaseMember copyWith({
     Object? id = _Undefined,

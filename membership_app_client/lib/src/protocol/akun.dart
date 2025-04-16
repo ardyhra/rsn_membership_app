@@ -56,6 +56,9 @@ abstract class Akun implements _i1.SerializableModel {
 
   String password;
 
+  /// Returns a shallow copy of this [Akun]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   Akun copyWith({
     int? id,
     int? relatedId,
@@ -101,6 +104,9 @@ class _AkunImpl extends Akun {
           password: password,
         );
 
+  /// Returns a shallow copy of this [Akun]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   Akun copyWith({
     Object? id = _Undefined,

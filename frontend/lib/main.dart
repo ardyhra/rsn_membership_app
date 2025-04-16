@@ -8,7 +8,7 @@ import 'package:jaspr/server.dart';
 
 // Imports the [App] component.
 import 'app.dart';
-
+import 'pages/login_page.dart';
 
 // This file is generated automatically by Jaspr, do not remove or edit.
 import 'jaspr_options.dart';

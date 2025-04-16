@@ -117,6 +117,9 @@ abstract class Member implements _i1.SerializableModel {
 
   int? salesPelangganSalesId;
 
+  /// Returns a shallow copy of this [Member]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   Member copyWith({
     int? id,
     String? namaPelanggan,
@@ -211,6 +214,9 @@ class _MemberImpl extends Member {
           salesPelangganSalesId: salesPelangganSalesId,
         );
 
+  /// Returns a shallow copy of this [Member]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   Member copyWith({
     Object? id = _Undefined,

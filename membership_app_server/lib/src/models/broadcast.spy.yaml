@@ -1,7 +1,6 @@
 class: Broadcast
 table: broadcast
 fields:
-  # idMessage: int
   pesan: String
   tujuan: int
   tanggalDibuat: DateTime

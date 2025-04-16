@@ -6,7 +6,7 @@ class Sidebar extends StatelessComponent {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    var activePath = context.binding.currentUri.path;
+    var activePath = context.binding.currentUrl;
 
     yield nav(classes: 'sidebar', [
       div(classes: 'sidebar-header', [

@@ -30,11 +30,12 @@ webServer:
 # If you are connecting on a public IP (e.g. on AWS or Google Cloud Run), you
 # connect on the public IP of the database e.g. database.examplepod.com.
 database:
-  host: database.private-production.examplepod.com
-  port: 5432
-  name: serverpod
-  user: postgres
-  requireSsl: true
+  host: postgres # Use the service name from docker-compose.yaml
+  port: 5432     # Default PostgreSQL internal port
+  name: membership_app # Match POSTGRES_DB in docker-compose
+  user: postgres     # Match POSTGRES_USER in docker-compose
+  # Load password securely from environment variable set by docker-compose
+  password: ${DB_PASS_ENV_VAR}
 
 # This is the setup for Redis. The default for the Google Cloud Engine Terraform
 # configuration is to connect on a private IP address.
@@ -44,3 +45,16 @@ redis:
   enabled: false
   host: redis.private-production.examplepod.com
   port: 6379
+  password: ${REDIS_PASS_ENV_VAR}
+
+modules:
+  auth: # Must match nickname in generator.yaml
+  enableEmailPasswordSignIn: false
+    # Add specific configurations if needed, defaults are often fine for basic session handling
+    # e.g., enableEmailPasswordSignIn: false (since we handle it manually)
+
+passwords:
+  # BEST PRACTICE: Load from environment variable in production
+  jwtSecret: ${JWT_SECRET_KEY_ENV_VAR}
+  # OR if not using env vars, paste the strong production key here, but keep this file secure!
+  # jwtSecret: 'YOUR_ACTUAL_STRONG_PRODUCTION_SECRET_e9a8b7c6d5...'

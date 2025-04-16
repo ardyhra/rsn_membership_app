@@ -2,3 +2,9 @@ type: server
 
 client_package_path: ../membership_app_client
 server_test_tools_path: test/integration/test_tools
+modules:
+  serverpod_auth: # Nickname can be anything
+    nickname: auth
+
+passwords: # Use this section for sensitive values
+  jwtSecret: # Choose a name for your secret (e.g., jwtSecret, appJwtSignKey)

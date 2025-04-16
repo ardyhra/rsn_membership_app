@@ -39,3 +39,12 @@ redis:
   enabled: false
   host: localhost
   port: 8091
+
+modules:
+  auth: # Must match nickname in generator.yaml
+  enableEmailPasswordSignIn: false
+    # Add specific configurations if needed, defaults are often fine for basic session handling
+    # e.g., enableEmailPasswordSignIn: false (since we handle it manually)
+
+passwords:
+  jwtSecret: 'a_long_and_very_secret_key_for_development_123!@#' # Use a different, strong key for development

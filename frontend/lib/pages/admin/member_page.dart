@@ -3,6 +3,7 @@ import 'package:membership_app_client/membership_app_client.dart'; // Generated 
 import '../../components/admin/admin_layout.dart';
 import '../../components/admin/member_list_component.dart';
 import '../../components/admin/member_verification_component.dart';
+import '../../services/profile_service.dart';
 
 @client
 class MemberPage extends StatefulComponent {
@@ -82,6 +83,8 @@ class _MemberPageState extends State<MemberPage> {
   @override
   void initState() {
     super.initState();
+    print("[CLIENT MemberPage] initState: Calling fetchUserProfile...");
+    ProfileService.instance.fetchUserProfile(); // Ambil profil pengguna
     fetchMembers();
   }
 

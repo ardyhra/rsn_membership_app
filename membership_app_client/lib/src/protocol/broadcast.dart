@@ -47,6 +47,9 @@ abstract class Broadcast implements _i1.SerializableModel {
 
   DateTime tanggalDibuat;
 
+  /// Returns a shallow copy of this [Broadcast]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   Broadcast copyWith({
     int? id,
     String? pesan,
@@ -84,6 +87,9 @@ class _BroadcastImpl extends Broadcast {
           tanggalDibuat: tanggalDibuat,
         );
 
+  /// Returns a shallow copy of this [Broadcast]
+  /// with some or all fields replaced by the given arguments.
+  @_i1.useResult
   @override
   Broadcast copyWith({
     Object? id = _Undefined,

@@ -5,6 +5,7 @@ import '../../components/admin/sales_table.dart';
 import '../../components/admin/sales_form.dart';
 import '../../components/admin/sales_delete_popup.dart';
 import '../../components/admin/sales_members_list.dart';
+import '../../services/profile_service.dart';
 
 @client
 class SalesPage extends StatefulComponent {
@@ -29,6 +30,8 @@ class _SalesPageState extends State<SalesPage> {
   @override
   void initState() {
     super.initState();
+    print("[CLIENT MemberPage] initState: Calling fetchUserProfile...");
+    ProfileService.instance.fetchUserProfile(); // Ambil profil pengguna
     fetchSales();
   }
 
