@@ -19,7 +19,8 @@
     WORKDIR /app/frontend
     RUN dart pub get
     # Generate Jaspr build artifacts (adjust command if needed, e.g., --ssr)
-    RUN jaspr build --output=../static # Build directly into a static folder at the root
+    RUN jaspr build --output=../static 
+    # Build directly into a static folder at the root
     
     # Reset WORKDIR for final stage copies
     WORKDIR /app
