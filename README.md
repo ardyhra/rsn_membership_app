@@ -23,6 +23,7 @@ project/
 ## Setup Proyek
 ### Instalasi Awal
 - Dart
+
 Install Dart SDK dengan mengikuti petunjuk pada https://dart.dev/get-dart
 
 (Rekomendasi : Melakukan instalasi Flutter yang sudah include dengan Dart SDK : https://docs.flutter.dev/get-started/install/windows/web)
@@ -37,6 +38,7 @@ Lalu, Tambahkan folder bin Jaspr ke PATH atau Environment Variables (biasanya di
 dart pub global activate serverpod
 ```
 - PostgreSQL
+
 Install PostgreSQL
 
 https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17
@@ -46,6 +48,7 @@ Lalu install Tools DB, bisa menggunakan DBeaver (https://dbeaver.io/files/dbeave
 Tambahkan folder bin dari postgres (Biasanya di C:\Program Files\PostgreSQL\17\bin) ke PATH atau Environment Variables.
 
 - Migrasi Database
+
 Cara 1 :
 Download file dump postgresql di repo (membership-postgres-202504161633.sql). Buka Dbeaver. Masuk ke database baru yang masih kosong. Lakukan import dengan klik kanan di database > Tools > Execute Script > Pilih Input file dump > Start > Tunggu sampai proses selesai. 
 
