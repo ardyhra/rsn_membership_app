@@ -22,17 +22,25 @@ project/
 
 ## Setup Proyek
 ### Instalasi Awal
-- Jaspr
+- Dart
+Install Dart SDK dengan mengikuti petunjuk pada https://dart.dev/get-dart
+
+(Rekomendasi : Melakukan instalasi Flutter yang sudah include dengan Dart SDK : https://docs.flutter.dev/get-started/install/windows/web)
+- Buat direktori proyek baru
+- Install Jaspr di direktori proyek
 ```bash
 dart pub global activate jaspr
 ```
-- Serverpod
+- Install Serverpod di direktori proyek
 ```bash
 dart pub global activate serverpod
 ```
 - PostgreSQL
+Install PostgreSQL
 
-Inisialisasi Database PostgreSQL
+https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17
+
+Konfigurasi username dan password untuk root, lalu buat database Postgres baru 
 
 ### Konfigurasi Backend
 1. Masuk ke folder backend
@@ -80,19 +88,6 @@ dart pub get
 # Sesuaikan dengan port yang terbuka
 jaspr serve --port 8083
 ```
-4. Masuk ke tampilan frontend melalui http://localhost:8083/login, saat ini belum ada autentikasi, masuk pada halaman login :
-- Sisi admin (desktop web) : user admin, pass admin123
-- Sisi member (mobile web) : user member, pass member123
-- Sisi sales (mobile web) : user sales, pass sales123
-- Untuk member dan sales, ubah settingan developer tools (F12) di browser agar menjadi tampilan mobile
+4. Masuk ke tampilan frontend melalui http://localhost:8083/login
 
 
-### Progress
-1. Frontend
-- Admin : Sudah sesuai desain UI
-- Member : Missing halaman untuk detail informasi
-- Sales : Missing halaman untuk detail informasi
-- Superadmin : Belum ada menu untuk atur role, desain UI belum ada
-
-2. Backend
-- Admin : Menu informasi sudah terintegrasi, progress pada menu member
