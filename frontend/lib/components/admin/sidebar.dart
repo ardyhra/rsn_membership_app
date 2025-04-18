@@ -50,12 +50,12 @@ class Sidebar extends StatelessComponent {
               span([text('Sales')]),
             ])),
           ]),
-          li(classes: 'menu-item ${activePath == '/broadcast' ? 'active' : ''}', [
-            Link(to: '/broadcast', child: div(classes: 'menu-content', [
-              img(src: '/images/broadcast-icon.png', alt: 'Broadcast Icon', classes: 'menu-icon'),
-              span([text('Broadcast')]),
-            ])),
-          ]),
+          // li(classes: 'menu-item ${activePath == '/broadcast' ? 'active' : ''}', [
+          //   Link(to: '/broadcast', child: div(classes: 'menu-content', [
+          //     img(src: '/images/broadcast-icon.png', alt: 'Broadcast Icon', classes: 'menu-icon'),
+          //     span([text('Broadcast')]),
+          //   ])),
+          // ]),
           li(classes: 'menu-item ${activePath == '/database' ? 'active' : ''}', [
             Link(to: '/database', child: div(classes: 'menu-content', [
               img(src: '/images/database-icon.png', alt: 'Database Icon', classes: 'menu-icon'),

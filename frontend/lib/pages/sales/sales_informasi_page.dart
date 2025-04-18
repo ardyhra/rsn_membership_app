@@ -10,6 +10,13 @@ class SalesInformasiPage extends StatelessComponent {
       pageTitle: 'Informasi',
       child: div(classes: 'sales-informasi-page', [
         DomComponent(
+          tag: 'link',
+          attributes: {
+            'rel': 'stylesheet',
+            'href': '/styles/mobile-sales.css',
+          },
+        ),
+        DomComponent(
           tag: 'script',
           attributes: {'src': '/scripts/mobile-info-handler.js'},
         ),

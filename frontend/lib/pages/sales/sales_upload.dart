@@ -9,6 +9,13 @@ class SalesUploadPage extends StatelessComponent {
     yield LayoutSales(
       pageTitle: 'Upload Dokumen',
       child: div([
+        DomComponent(
+          tag: 'link',
+          attributes: {
+            'rel': 'stylesheet',
+            'href': '/styles/mobile-sales.css',
+          },
+        ),
         // Include Choices.js CSS
         DomComponent(
           tag: 'link',

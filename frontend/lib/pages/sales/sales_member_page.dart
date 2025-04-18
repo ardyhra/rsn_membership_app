@@ -14,6 +14,13 @@ class SalesMemberPage extends StatelessComponent {
           tag: 'link',
           attributes: {
             'rel': 'stylesheet',
+            'href': '/styles/mobile-sales.css',
+          },
+        ),
+        DomComponent(
+          tag: 'link',
+          attributes: {
+            'rel': 'stylesheet',
             'href': '/styles/mobile-sales-member.css',
           },
         ),

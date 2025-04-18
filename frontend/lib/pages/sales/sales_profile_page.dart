@@ -7,6 +7,13 @@ class SalesProfilePage extends StatelessComponent {
   @override
   Iterable<Component> build(BuildContext context) sync* {
     yield DomComponent(
+          tag: 'link',
+          attributes: {
+            'rel': 'stylesheet',
+            'href': '/styles/mobile-sales.css',
+          },
+        );
+    yield DomComponent(
       tag: 'script',
       attributes: {'src': '/scripts/mobile-profile-handler.js'},
     );
