@@ -22,24 +22,54 @@ project/
 
 ## Setup Proyek
 ### Instalasi Awal
-- Jaspr
+- Dart
+
+Install Dart SDK dengan mengikuti petunjuk pada https://dart.dev/get-dart
+
+(Rekomendasi : Melakukan instalasi Flutter yang sudah include dengan Dart SDK : https://docs.flutter.dev/get-started/install/windows/web)
+- Buat direktori proyek baru
+- Install Jaspr melalui CMD atau terminal
 ```bash
 dart pub global activate jaspr
 ```
-- Serverpod
+Lalu, Tambahkan folder bin Jaspr ke PATH atau Environment Variables (biasanya di C:\Users\User_name\AppData\Local\Pub\Cache\bin)
+- Install Serverpod melalui CMD atau terminal
 ```bash
 dart pub global activate serverpod
 ```
 - PostgreSQL
 
-Inisialisasi Database PostgreSQL
+Install PostgreSQL
+
+https://www.enterprisedb.com/postgresql-tutorial-resources-training-1?uuid=69f95902-b451-4735-b7e4-1b62209d4dfd&campaignId=postgres_rc_17
+
+Lalu install Tools DB, bisa menggunakan DBeaver (https://dbeaver.io/files/dbeaver-ce-latest-x86_64-setup.exe). Buat new connection. Konfigurasi username dan password, lalu buat database Postgres baru.
+
+Tambahkan folder bin dari postgres (Biasanya di C:\Program Files\PostgreSQL\17\bin) ke PATH atau Environment Variables.
+
+- Migrasi Database
+
+Cara 1 :
+Download file dump postgresql di repo (membership-postgres-202504161633.sql). Buka Dbeaver. Masuk ke database baru yang masih kosong. Lakukan import dengan klik kanan di database > Tools > Execute Script > Pilih Input file dump > Start > Tunggu sampai proses selesai. 
+
+Cara 2 (jika execute script tidak bisa) :
+Setelah download file dump. Buka Command Prompt lalu jalankan 
+```bash
+pg_restore -h localhost -p 5432 -U username -d db_name file_path
+# contoh : pg_restore -h localhost -p 5432 -U postgres -d postgres "C:\Users\ASUS TUF\Documents\membership-postgres-202504161633.sql"
+```
+
 
 ### Konfigurasi Backend
 1. Masuk ke folder backend
 ```bash
 cd membership_app_server
 ```
-2. Perbarui konfigurasi pada file config/development.yaml sesuai database yang dibuat 
+2. Update dependencies
+```bash
+dart pub get
+```
+3. Perbarui konfigurasi pada file config/development.yaml sesuai database yang dibuat 
 ```bash
 # contoh
 database:
@@ -49,7 +79,9 @@ database:
   user: postgres
   password: your_password
 ```
-3. Jika ada perubahan yang dilakukan, lakukan generate kode serverpod
+4. Tambahkan file password.yaml di config (minta ke author)
+
+5. Jika ada perubahan yang dilakukan, lakukan generate kode serverpod
 ```bash
 serverpod generate
 ```
@@ -58,12 +90,12 @@ serverpod generate
 
 serverpod create-migration 
 ```
-4. Aktivasi server backend
+6. Aktivasi server backend
 ```bash
 dart bin/main.dart
 ```
 ```bash
-# Jika ingin sekaligus migrasi database
+# Jika ingin sekaligus migrasi database (tidak perlu jika sudah berhasil import database dan isinya dari file dump, kecuali ada perubahan)
 dart bin/main.dart --apply-migrations
 ```
 ### Konfigurasi Frontend
@@ -80,19 +112,6 @@ dart pub get
 # Sesuaikan dengan port yang terbuka
 jaspr serve --port 8083
 ```
-4. Masuk ke tampilan frontend melalui http://localhost:8083/login, saat ini belum ada autentikasi, masuk pada halaman login :
-- Sisi admin (desktop web) : user admin, pass admin123
-- Sisi member (mobile web) : user member, pass member123
-- Sisi sales (mobile web) : user sales, pass sales123
-- Untuk member dan sales, ubah settingan developer tools (F12) di browser agar menjadi tampilan mobile
+4. Masuk ke tampilan frontend melalui http://localhost:8083/login
 
 
-### Progress
-1. Frontend
-- Admin : Sudah sesuai desain UI
-- Member : Missing halaman untuk detail informasi
-- Sales : Missing halaman untuk detail informasi
-- Superadmin : Belum ada menu untuk atur role, desain UI belum ada
-
-2. Backend
-- Admin : Menu informasi sudah terintegrasi, progress pada menu member
