@@ -30,7 +30,7 @@ Install Dart SDK dengan mengikuti petunjuk pada https://dart.dev/get-dart
 - Buat direktori proyek baru
 - Install Jaspr melalui CMD atau terminal
 ```bash
-dart pub global activate jaspr
+dart pub global activate jaspr_cli
 ```
 Lalu, Tambahkan folder bin Jaspr ke PATH atau Environment Variables (biasanya di C:\Users\User_name\AppData\Local\Pub\Cache\bin)
 - Install Serverpod melalui CMD atau terminal
